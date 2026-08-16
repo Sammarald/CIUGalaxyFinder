@@ -1,0 +1,943 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background: #00000f;
+    color: #ffffff;
+}
+
+#welcomeScreen {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #05070c;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+#welcomeContent {
+    width: min(920px, calc(100vw - 48px));
+
+    padding: 30px;
+
+    text-align: center;
+}
+
+#welcomeContent h1 {
+    margin: 0 0 16px;
+
+    font-size: 36px;
+}
+
+#welcomeContent p {
+    margin: 0 0 28px;
+
+    color: #9299a8;
+
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.welcome-prompt {
+    color: #e8eaf0;
+
+    font-size: 14px;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    border: 1px solid #3f3f4f;
+    border-radius: 5px;
+
+    background: #1f1f2f;
+    color: #ffffff;
+
+    padding: 6px 11px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2f2f4f;
+}
+
+button:active {
+    background: #3f3f6f;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 13px;
+    user-select: none;
+}
+
+#status {
+    position: absolute;
+
+    bottom: 20px;
+    right: 20px;
+
+    z-index: 1100;
+
+    min-width: 120px;
+
+    text-align: right;
+
+    color: #ffffff;
+
+    font-size: 13px;
+}
+
+#mapContainer {
+    position: relative;
+
+    flex: 1;
+    min-height: 0;
+
+    overflow: hidden;
+
+    background: #00000f;
+}
+
+#mapCanvas {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    cursor: grab;
+}
+
+#mapCanvas.dragging {
+    cursor: grabbing;
+}
+
+.environmental-properties {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: -4px;
+    margin-bottom: 8px;
+}
+
+#coordinates {
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+
+    color: #bfbfbf;
+    font: 24px system-ui, sans-serif;
+
+    pointer-events: none;
+
+    z-index: 10;
+}
+
+#menuButton {
+    width: 64px;
+    height: 64px;
+
+    font-size: 48px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#menuControls {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+#searchListControls {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.back-button {
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+
+    padding: 0 0 8px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 44px;
+    line-height: 1;
+}
+
+.sort-search-button {
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+}
+
+.sort-order-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 42px;
+}
+
+.sort-arrow {
+    font-size: 32px;
+    line-height: 1;
+
+    margin-right: 5px;
+}
+
+.sort-az {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 0.8;
+
+    text-align: left;
+    position: relative;
+    right: 5px;
+    top: 5px;
+}
+
+.sort-label {
+    margin-top: 10px;
+
+    font-size: 15px;
+    line-height: 1.1;
+
+    white-space: nowrap;
+}
+
+.options-toggle {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 0 6px;
+
+    border-radius: 10px;
+
+    font-size: 30px;
+    line-height: 1;
+}
+
+.back-button {
+    padding-bottom: 8px;
+}
+
+#optionsPanel {
+    width: min(320px, calc(100vw - 32px));
+    max-height: calc(100vh - 16px - 120px);
+
+    overflow: hidden;
+}
+
+#searchResultsPanel {
+    width: min(320px, calc(100vw - 32px));
+    max-height: calc(100vh - 16px - 120px);
+
+    overflow: hidden;
+}
+
+#searchResultsEmpty {
+    padding: 24px 12px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    line-height: 1.4;
+
+    text-align: center;
+}
+
+#searchResultsList {
+    max-height: calc(100vh - 16px - 120px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#backButton,
+#sortSearchButton {
+    display: inline-flex;
+    vertical-align: top;
+}
+
+#backButton {
+    margin-right: 10px;
+}
+
+.search-result-entry {
+    width: 100%;
+    min-height: 48px;
+
+    padding: 7px 10px;
+
+    margin-bottom: 8px;
+
+    border: 1px solid;
+
+    border-radius: 9px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.search-result-environment {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+
+    font-size: 10px;
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    white-space: nowrap;
+
+    position: relative;
+    top: 1px;
+}
+
+.search-result-entry:hover {
+    filter: brightness(1.25);
+}
+
+.search-result-icon {
+    width: 30px;
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid;
+
+    border-radius: 5px;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    line-height: 1;
+}
+
+.search-result-name {
+    min-width: 0;
+
+    flex: 1;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mission-info-property {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+}
+
+.mission-info-type {
+    margin-bottom: 8px;
+
+    color: #bfbfbf;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-align: left;
+}
+
+.mission-info-property > span:last-child {
+    text-align: right;
+}
+
+.mission-info-row {
+    align-items: center;
+}
+
+.mission-info-bar {
+    width: 100%;
+    height: 8px;
+
+    margin-top: -3px;
+    margin-bottom: 10px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 3px;
+
+    background: #2f2f4f;
+}
+
+.mission-duration-bar {
+    background: #071f1f;
+}
+
+.mission-info-bar-fill {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 100%;
+
+    background: #00ffff;
+}
+
+.mission-difficulty-bar {
+    background: #1f0f07;
+}
+
+.mission-info-bar-high,
+.mission-info-bar-low {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    height: 100%;
+}
+
+.mission-info-bar-high {
+    background: #7f3f00;
+}
+
+.mission-info-bar-low {
+    background: #ff7f00;
+}
+
+.mission-result-name {
+    font-size: 10px;
+}
+
+.search-result-coordinates {
+    flex: 0 0 auto;
+
+    font-size: 12px;
+    font-weight: 400;
+
+    white-space: nowrap;
+}
+
+#optionsList {
+    max-height: calc(100vh - 16px - 120px);
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.options-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+.options-group-title {
+    padding: 4px 4px 2px;
+
+    color: #7f7faf;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+#searchListModes {
+    display: flex;
+    gap: 8px;
+
+    width: 100%;
+
+    margin-bottom: 14px;
+}
+
+.search-mode-button {
+    flex: 1;
+
+    min-height: 42px;
+
+    padding: 8px 10px;
+
+    border-radius: 9px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.search-mode-button.active {
+    background: #3f3f6f;
+    border-color: #6f6fbf;
+}
+
+.options-group > label,
+.environment-search-button,
+#planet-search-input,
+#mission-search-input {
+    min-height: 42px;
+
+    padding: 9px 12px;
+
+    border: 1px solid #3f3f6f;
+    border-radius: 9px;
+
+    background: #1f1f2f;
+}
+
+.options-group > label {
+    gap: 9px;
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+.options-group > label:hover,
+.environment-search-button:hover {
+    background: #2f2f4f;
+    border-color: #6f6fbf;
+}
+
+#planet-search-input,
+#mission-search-input {
+    width: 100%;
+    height: 38px;
+
+    padding: 0 11px;
+
+    border: 1px solid #3f3f6f;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #1f1f2f;
+    color: #ffffff;
+
+    font: inherit;
+}
+
+#planet-search-input:focus,
+#mission-search-input:focus {
+    border-color: #6f6fbf;
+}
+
+.reset-filters-button {
+    width: 100%;
+
+    min-height: 42px;
+
+    padding: 9px 12px;
+
+    border: 1px solid #3f3f6f;
+    border-radius: 9px;
+
+    background: #1f1f2f;
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    text-align: center;
+}
+
+.reset-filters-button:hover {
+    background: #2f2f4f;
+    border-color: #6f6fbf;
+}
+
+.environment-search-button {
+    width: 100%;
+
+    text-align: left;
+    font-size: 16px;
+
+    transition:
+        background 0.12s,
+        border-color 0.12s;
+}
+
+.environment-search-button[data-state="additive"] {
+    border-color: #4fff7f;
+    background: #0f3f1f;
+}
+
+.environment-search-button[data-state="subtractive"] {
+    border-color: #ff3f3f;
+    background: #3f0f0f;
+}
+
+.search-list-button {
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+
+    padding: 8px;
+
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 44px;
+    line-height: 1;
+}
+
+.search-list-icon {
+    font-size: 42px;
+    line-height: 0.9;
+
+    margin-bottom: 8px;
+}
+
+.search-list-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.05;
+
+    text-align: center;
+}
+
+.mission-result-stats {
+    flex: 0 0 auto;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+    justify-content: center;
+
+    gap: 2px;
+
+    min-width: 32px;
+
+    line-height: 1;
+}
+
+.mission-result-waves {
+    color: #00ffff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mission-result-difficulty {
+    color: #ff7f00;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mission-result-environment {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+
+    font-size: 10px;
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    white-space: nowrap;
+
+    position: relative;
+    top: 6px;
+}
+
+#zoomControls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 6px;
+
+    z-index: 100;
+}
+
+#zoomControls button {
+    width: 64px;
+    height: 64px;
+
+    font-size: 48px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+#focusedMissionControls {
+    position: absolute;
+
+    bottom: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    z-index: 100;
+}
+
+#focusedMissionControls.hidden {
+    display: none;
+}
+
+#focusedMissionButton {
+    width: 160px;
+    height: 64px;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    font-size: 16px;
+}
+
+.focused-mission-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+
+.range-values {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+.dual-range {
+    position: relative;
+
+    width: 100%;
+    height: 24px;
+
+    margin-top: 2px;
+
+    background: #3f3f6f;
+    border-radius: 3px;
+}
+
+.dual-range input[type="range"] {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 24px;
+
+    margin: 0;
+
+    background: transparent;
+
+    pointer-events: none;
+
+    appearance: none;
+    -webkit-appearance: none;
+    z-index: 1;
+}
+
+.dual-range input[type="range"].active {
+    z-index: 4;
+}
+
+.dual-range input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+
+    background: transparent;
+}
+
+.dual-range input[type="range"]::-moz-range-track {
+    height: 6px;
+
+    background: transparent;
+}
+
+.dual-range input[type="range"]::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+
+    margin-top: -5px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #7f7fff;
+
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    pointer-events: auto;
+}
+
+.dual-range input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+
+    background: #7f7fff;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+}
+
+.range-label {
+    margin-bottom: 2px;
+
+    color: #7f7f7f;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#infoPanel {
+    position: fixed;
+    right: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 300px;
+    height: 300px;
+
+    padding: 18px;
+}
+
+#infoPanel h2 {
+    margin: 0 10px 0px 0;
+
+    font-size: 20px;
+}
+
+#infoContent {
+    color: #bfbfbf;
+    font-size: 14px;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+}
+
+#infoContent .coordinates {
+    display: flex;
+    justify-content: space-between;
+}
+
+#infoContent .property {
+    margin-bottom: 5px;
+}
+
+#infoContent .property-name {
+    color: #7f7f7f;
+}
+
+#infoContent .section {
+    margin-top: 15px;
+    margin-bottom: 6px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+#clarkG {
+    position: absolute;
+    display: none;
+    pointer-events: none;
+
+    width: auto;
+    height: auto;
+}
