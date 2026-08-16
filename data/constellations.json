@@ -1,0 +1,317 @@
+{
+    "Pasithea": {
+        "color": "#FF007f"
+    },
+    "Halirrhothius": {
+        "color": "#FF007f"
+    },
+    "Syme": {
+        "color": "#FF007f"
+    },
+    "Skeiron": {
+        "color": "#FF007f"
+    },
+    "Alcibie": {
+        "color": "#FF007f"
+    },
+    "Lophis": {
+        "color": "#FF007f"
+    },
+    "Aetolus": {
+        "color": "#FF007f"
+    },
+    "Erebos": {
+        "color": "#FF007f"
+    },
+    "Cerberus": {
+        "color": "#FF007f"
+    },
+    "Thoosa": {
+        "color": "#7f00ff"
+    },
+    "Ioke": {
+        "color": "#7f00ff"
+    },
+    "Phylonoe": {
+        "color": "#7f00ff"
+    },
+    "Endeïs": {
+        "color": "#7f00ff"
+    },
+    "Leitus": {
+        "color": "#7f00ff"
+    },
+    "Briseus": {
+        "color": "#7f00ff"
+    },
+    "Canthus": {
+        "color": "#7f00ff"
+    },
+    "Pygmalion": {
+        "color": "#7f00ff"
+    },
+    "Chelone": {
+        "color": "#7f00ff"
+    },
+    "Ponos": {
+        "color": "#00FFFF"
+    },
+    "Leto": {
+        "color": "#00FFFF"
+    },
+    "Europs": {
+        "color": "#00FFFF"
+    },
+    "Caucon": {
+        "color": "#00FFFF"
+    },
+    "Tenes": {
+        "color": "#00FFFF"
+    },
+    "Pylades": {
+        "color": "#00FFFF"
+    },
+    "Telegonus": {
+        "color": "#00FFFF"
+    },
+    "Pterelaos": {
+        "color": "#00FFFF"
+    },
+    "Phyleus": {
+        "color": "#00FFFF"
+    },
+    "Pentheus": {
+        "color": "#FF7F00"
+    },
+    "Mopsus": {
+        "color": "#FF7F00"
+    },
+    "Theia": {
+        "color": "#FF7F00"
+    },
+    "Nicippe": {
+        "color": "#FF7F00"
+    },
+    "Clinis": {
+        "color": "#FF7F00"
+    },
+    "Iolaus": {
+        "color": "#FF7F00"
+    },
+    "Dryope": {
+        "color": "#FF7F00"
+    },
+    "Anthousai": {
+        "color": "#FF7F00"
+    },
+    "Polybus": {
+        "color": "#FF7F00"
+    },
+    "Thestius": {
+        "color": "#007FFF"
+    },
+    "Prothoenor": {
+        "color": "#007FFF"
+    },
+    "Menestheus": {
+        "color": "#007FFF"
+    },
+    "Talaus": {
+        "color": "#007FFF"
+    },
+    "Enceladus": {
+        "color": "#007FFF"
+    },
+    "Amarynceus": {
+        "color": "#007FFF"
+    },
+    "Geryon": {
+        "color": "#007FFF"
+    },
+    "Hymenaios": {
+        "color": "#007FFF"
+    },
+    "Androgeus": {
+        "color": "#007FFF"
+    },
+    "Jason": {
+        "color": "#FF0000"
+    },
+    "Hippothoön": {
+        "color": "#FF0000"
+    },
+    "Theonoe": {
+        "color": "#FF0000"
+    },
+    "Auxesia": {
+        "color": "#FF0000"
+    },
+    "Ismene": {
+        "color": "#FF0000"
+    },
+    "Eupheme": {
+        "color": "#FF0000"
+    },
+    "Melanthus": {
+        "color": "#FF0000"
+    },
+    "Bianna": {
+        "color": "#FF0000"
+    },
+    "Peitho": {
+        "color": "#FF0000"
+    },
+    "Lethaea": {
+        "color": "#FFFF00"
+    },
+    "Asteropaios": {
+        "color": "#FFFF00"
+    },
+    "Aethalides": {
+        "color": "#FFFF00"
+    },
+    "Batea": {
+        "color": "#FFFF00"
+    },
+    "Celtine": {
+        "color": "#FFFF00"
+    },
+    "Hyperbius": {
+        "color": "#FFFF00"
+    },
+    "Styx": {
+        "color": "#FFFF00"
+    },
+    "Euthenia": {
+        "color": "#FFFF00"
+    },
+    "Sabaktes": {
+        "color": "#FFFF00"
+    },
+    "Cleitus": {
+        "color": "#00FF00"
+    },
+    "Melanippe": {
+        "color": "#00FF00"
+    },
+    "Phobetor": {
+        "color": "#00FF00"
+    },
+    "Meliboea": {
+        "color": "#00FF00"
+    },
+    "Thestor": {
+        "color": "#00FF00"
+    },
+    "Aloadae": {
+        "color": "#00FF00"
+    },
+    "Sithon": {
+        "color": "#00FF00"
+    },
+    "Apsyrtus": {
+        "color": "#00FF00"
+    },
+    "Xuthus": {
+        "color": "#00FF00"
+    },
+    "Hyettus": {
+        "color": "#7FFF00"
+    },
+    "Silenus": {
+        "color": "#7FFF00"
+    },
+    "Astyanassa": {
+        "color": "#7FFF00"
+    },
+    "Erymanthus": {
+        "color": "#7FFF00"
+    },
+    "Astraios": {
+        "color": "#7FFF00"
+    },
+    "Strophius": {
+        "color": "#7FFF00"
+    },
+    "Crino": {
+        "color": "#7FFF00"
+    },
+    "Nessus": {
+        "color": "#7FFF00"
+    },
+    "Asterodia": {
+        "color": "#0000FF"
+    },
+    "Nomos": {
+        "color": "#0000FF"
+    },
+    "Aiakos": {
+        "color": "#0000FF"
+    },
+    "Eurymachus": {
+        "color": "#0000FF"
+    },
+    "Adrastea": {
+        "color": "#0000FF"
+    },
+    "Narcissus": {
+        "color": "#0000FF"
+    },
+    "Stilbon": {
+        "color": "#0000FF"
+    },
+    "Chthonophyle": {
+        "color": "#0000FF"
+    },
+    "Amphion": {
+        "color": "#0000FF"
+    },
+    "Acrisius": {
+        "color": "#FF00FF"
+    },
+    "Melite": {
+        "color": "#FF00FF"
+    },
+    "Athamas": {
+        "color": "#FF00FF"
+    },
+    "Perses": {
+        "color": "#FF00FF"
+    },
+    "Parthenope": {
+        "color": "#FF00FF"
+    },
+    "Thrace": {
+        "color": "#FF00FF"
+    },
+    "Amphinome": {
+        "color": "#FF00FF"
+    },
+    "Lethe": {
+        "color": "#FF00FF"
+    },
+    "Leos": {
+        "color": "#00FF7F"
+    },
+    "Antenor": {
+        "color": "#00FF7F"
+    },
+    "Oupis": {
+        "color": "#00FF7F"
+    },
+    "Rarus": {
+        "color": "#00FF7F"
+    },
+    "Cebriones": {
+        "color": "#00FF7F"
+    },
+    "Lupe": {
+        "color": "#00FF7F"
+    },
+    "Amyntor": {
+        "color": "#00FF7F"
+    },
+    "Aegiale": {
+        "color": "#00FF7F"
+    }
+}
