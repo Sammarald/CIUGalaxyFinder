@@ -5,6 +5,8 @@ Data gathered with assistance from @PlasmaX and @Yami no Zero.
 
 Site made partially through AI tools.
 
+Doesn't use any texture/sound assets from the game itself.
+
 # Controls:
 
 +/=, -/_, Scroll Wheel, Pinch to Zoom In/Out
