@@ -288,7 +288,6 @@ setControlsEnabled(false);
         "click",
         () => {
             menuButton.classList.add("hidden");
-            coordinatesElement.classList.add("hidden");
         
             searchListControls.classList.remove("hidden");
         
@@ -330,7 +329,6 @@ setControlsEnabled(false);
     
             menuButton.classList.remove("hidden");
             searchListButton.classList.add("hidden");
-            coordinatesElement.classList.remove("hidden");
         }
     );
 
@@ -2758,6 +2756,17 @@ function drawCircle(
 }
 
 
+function getScreenUIScale() {
+    return Math.min(
+        1,
+        Math.max(
+            0.5,
+            state.canvasWidth / 720
+        )
+    );
+}
+
+
 function drawLabel(
     text,
     x,
@@ -2769,6 +2778,11 @@ function drawLabel(
     if (!showLabelsCheckbox.checked) {
         return;
     }
+
+    const scale =
+        getScreenUIScale();
+
+    size *= scale;
 
     ctx.save();
 
@@ -2815,6 +2829,9 @@ function drawSearchIndicator(
         return;
     }
 
+    const scale =
+        getScreenUIScale();
+
     ctx.save();
 
     if (count < 2) {
@@ -2826,14 +2843,18 @@ function drawSearchIndicator(
 
     ctx.fillStyle = "#000000";
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth =
+        Math.max(
+            1,
+            2 * scale
+        );
 
     ctx.beginPath();
 
     ctx.arc(
         x,
-        y + 7,
-        12,
+        y + 7 * scale,
+        12 * scale,
         0,
         Math.PI * 2
     );
@@ -2846,14 +2867,14 @@ function drawSearchIndicator(
     ctx.textBaseline = "middle";
 
     ctx.font =
-        "700 12px system-ui, sans-serif";
+        "700 ${12 * scale}px system-ui, sans-serif";
 
     ctx.fillStyle = color;
 
     ctx.fillText(
         count.toLocaleString(),
         x,
-        y + 7
+        y + 7 * scale
     );
 
     ctx.restore();
@@ -4903,10 +4924,6 @@ function exitFocusedMissionMode() {
         "hidden"
     );
 
-    coordinatesElement.classList.remove(
-        "hidden"
-    );
-
     infoContent.innerHTML = "";
     infoTitle.textContent = "";
     infoPanel.classList.add("hidden");
@@ -6926,7 +6943,6 @@ focusedMissionButton.addEventListener(
         sortSearchButton.classList.remove("hidden");
         searchListControls.classList.remove("hidden");
         menuButton.classList.add("hidden");
-        coordinatesElement.classList.add("hidden");
     
         searchResultsList.scrollTop = 0;
     

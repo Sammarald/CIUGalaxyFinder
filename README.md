@@ -3,9 +3,9 @@ Recreation of Chicken Invaders Universe's galaxy map that contains all 22,439 mi
 
 Data gathered with assistance from @PlasmaX and @Yami no Zero.
 
-Site made partially through AI tools.
+Code was written partially through AI tools.
 
-Doesn't use any texture/sound assets from the game itself.
+The map does not use any texture/sound assets from the game itself.
 
 # Controls:
 

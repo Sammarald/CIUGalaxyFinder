@@ -2,11 +2,17 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 html,
 body {
     margin: 0;
     width: 100%;
     height: 100%;
+    max-width: 100%;
     overflow: hidden;
 
     font-family:
@@ -39,7 +45,7 @@ body {
 }
 
 #welcomeContent {
-    width: min(920px, calc(100vw - 48px));
+    width: min(920px, calc(100vw - 24px));
 
     padding: 30px;
 
@@ -53,11 +59,11 @@ body {
 }
 
 #welcomeContent p {
-    margin: 0 0 28px;
+    margin: 0 0 2px;
 
     color: #9299a8;
 
-    font-size: 16px;
+    font-size: 12px;
     line-height: 1.5;
 }
 
@@ -106,8 +112,8 @@ label {
 #status {
     position: absolute;
 
-    bottom: 20px;
-    right: 20px;
+    top: 2px;
+    right: 2px;
 
     z-index: 1100;
 
@@ -116,6 +122,8 @@ label {
     text-align: right;
 
     color: #ffffff;
+
+    pointer-events: none;
 
     font-size: 13px;
 }
@@ -153,7 +161,7 @@ label {
 
 #coordinates {
     position: absolute;
-    left: 2px;
+    right: 2px;
     bottom: 2px;
 
     color: #bfbfbf;
@@ -889,14 +897,14 @@ label {
 
 #infoPanel {
     position: fixed;
-    right: 0px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
 
-    width: 300px;
-    height: 300px;
+    pointer-events: none;
 
-    padding: 18px;
+    width: 300px;
+    height: 280px;
 }
 
 #infoPanel h2 {
@@ -940,4 +948,254 @@ label {
 
     width: auto;
     height: auto;
+}
+
+@media (max-width: 600px) {
+    #menuButton {
+        width: 32px;
+        height: 32px;
+        font-size: 21px;
+    }
+
+    #menuControls {
+        left: 2px;
+        top: 2px;
+        gap: 4px;
+    }
+
+    #searchListControls {
+        gap: 3px;
+    }
+
+    .back-button,
+    .sort-search-button,
+    .search-list-button {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 52px;
+        border-radius: 7px;
+    }
+
+    .back-button {
+        padding: 0;
+        font-size: 25px;
+    }
+
+    .sort-search-button {
+        padding: 3px;
+    }
+
+    .sort-order-icon {
+        height: 20px;
+    }
+
+    .sort-arrow {
+        font-size: 18px;
+        margin-right: 1px;
+    }
+
+    .sort-az {
+        font-size: 9px;
+        right: 1px;
+        top: 1px;
+    }
+
+    .sort-label {
+        margin-top: 2px;
+        font-size: 8px;
+    }
+
+    .search-list-button {
+        padding: 3px;
+    }
+
+    .search-list-icon {
+        font-size: 22px;
+        margin-bottom: 2px;
+    }
+
+    .search-list-text {
+        font-size: 8px;
+    }
+
+    #optionsPanel,
+    #searchResultsPanel {
+        width: 150px;
+        max-width: 150px;
+        max-height: calc(100vh - 65px);
+    }
+
+    #optionsList,
+    #searchResultsList {
+        max-height: calc(100vh - 65px);
+    }
+
+    .options-group {
+        gap: 3px;
+        margin-bottom: 6px;
+    }
+
+    .options-group-title {
+        padding: 2px;
+        font-size: 10px;
+    }
+
+    #searchListModes {
+        gap: 3px;
+        margin-bottom: 4px;
+    }
+
+    .search-mode-button {
+        min-height: 27px;
+        padding: 4px;
+        font-size: 8px;
+    }
+
+    .options-group > label,
+    .environment-search-button {
+        min-height: 27px;
+        padding: 4px 5px;
+        font-size: 8px;
+    }
+
+    #planet-search-input,
+    #mission-search-input {
+        height: 27px;
+        padding: 0 5px;
+        font-size: 8px;
+    }
+
+    .reset-filters-button {
+        min-height: 27px;
+        padding: 4px 5px;
+        font-size: 8px;
+    }
+
+    #infoPanel {
+        right: 2px;
+        width: 150px;
+        max-width: 150px;
+        height: 180px;
+        padding: 8px;
+        overflow: hidden;
+    }
+
+    #infoPanel h2 {
+        margin: 0 5px 6px 0;
+        font-size: 13px;
+        line-height: 1.1;
+    }
+
+    #infoContent {
+        font-size: 8px;
+        line-height: 1.35;
+    }
+
+    #infoContent .property {
+        margin-bottom: 3px;
+    }
+
+    #infoContent .property-name {
+        font-size: 7px;
+    }
+
+    .environmental-properties {
+        font-size: 7px;
+        margin-top: -2px;
+        margin-bottom: 5px;
+    }
+
+    .mission-info-property,
+    .mission-info-type {
+        font-size: 8px;
+    }
+
+    .mission-info-property {
+        gap: 5px;
+        margin-bottom: 4px;
+    }
+
+    .mission-info-bar {
+        height: 5px;
+        margin-top: -2px;
+        margin-bottom: 6px;
+    }
+
+    /* Search results */
+    .search-result-entry {
+        min-height: 28px;
+        padding: 3px 4px;
+        margin-bottom: 3px;
+        gap: 4px;
+        font-size: 8px;
+    }
+
+    .search-result-icon {
+        width: 17px;
+        height: 17px;
+        flex: 0 0 17px;
+        font-size: 8px;
+    }
+
+    .search-result-coordinates {
+        font-size: 6px;
+    }
+
+    .search-result-environment {
+        font-size: 6px;
+    }
+
+    .mission-result-name {
+        font-size: 6px;
+    }
+
+    .mission-result-waves,
+    .mission-result-difficulty {
+        font-size: 7px;
+    }
+
+    .mission-result-environment {
+        font-size: 6px;
+    }
+
+    /* Bottom controls */
+    #zoomControls {
+        bottom: 5px;
+        gap: 3px;
+    }
+
+    #zoomControls button {
+        width: 32px;
+        height: 32px;
+        font-size: 21px;
+    }
+
+    #focusedMissionControls {
+        bottom: 5px;
+    }
+
+    #focusedMissionButton {
+        width: 80px;
+        height: 32px;
+        padding: 0 6px;
+        gap: 3px;
+        font-size: 8px;
+    }
+
+    .focused-mission-icon {
+        font-size: 16px;
+    }
+
+    #status {
+        top: 1px;
+        right: 1px;
+        min-width: 0;
+        font-size: 6px;
+    }
+
+    #coordinates {
+        right: 1px;
+        bottom: 1px;
+        font-size: 10px;
+    }
 }
