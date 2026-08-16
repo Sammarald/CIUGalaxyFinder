@@ -4497,11 +4497,7 @@ function updateSearchResultsList() {
         
                 focusObject(
                     object,
-                    false
-                );
-        
-                showMissionInfo(
-                    mission
+                    true
                 );
             }
         );

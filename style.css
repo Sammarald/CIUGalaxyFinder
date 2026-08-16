@@ -376,7 +376,7 @@ label {
     white-space: nowrap;
 
     position: relative;
-    top: 1px;
+    top: 6px;
 }
 
 .search-result-entry:hover {
@@ -722,6 +722,7 @@ label {
 
 .mission-result-environment {
     flex: 0 0 auto;
+    margin-right: -6px;
 
     display: flex;
     align-items: center;
@@ -1142,20 +1143,51 @@ label {
     }
 
     .search-result-environment {
+        flex: 0 0 auto;
+        max-width: 24px;
         font-size: 6px;
     }
+    
+    .search-result-name {
+        min-width: 0;
+        flex: 1 1 auto;
+        font-size: 5px;
 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
     .mission-result-name {
-        font-size: 6px;
+        min-width: 0;
+        flex: 1 1 auto;
+        font-size: 5px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mission-result-stats {
+        flex: 0 0 24px;
+        min-width: 24px;
     }
 
     .mission-result-waves,
     .mission-result-difficulty {
-        font-size: 7px;
-    }
-
-    .mission-result-environment {
         font-size: 6px;
+    }
+    
+    .mission-result-environment {
+        flex: 0 0 auto;
+        max-width: 24px;
+        margin-right: -12px;
+
+        overflow: hidden;
+        white-space: nowrap;
+
+        font-size: 6px;
+        text-align: right;
     }
 
     /* Bottom controls */
