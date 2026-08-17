@@ -2149,67 +2149,7 @@ function getDroidPlanetPosition(droid) {
 }
 
 
-function getTravelProgress(progress) {
-    const ramp = 0.1;
-
-    const speed =
-        1 / (1 - ramp);
-
-    if (progress < ramp) {
-        const t =
-            progress / ramp;
-
-        return (
-            0.5 *
-            ramp *
-            speed *
-            t *
-            t
-        );
-    }
-
-    if (progress > 1 - ramp) {
-        const t =
-            (
-                progress -
-                (1 - ramp)
-            ) / ramp;
-
-        const middleDistance =
-            ramp * 0.5 * speed +
-            (1 - 2 * ramp) * speed;
-
-        return (
-            middleDistance +
-            ramp *
-            speed *
-            (
-                t -
-                0.5 * t * t
-            )
-        );
-    }
-
-    return (
-        ramp * 0.5 * speed +
-        (
-            progress -
-            ramp
-        ) *
-        speed
-    );
-}
-
-
 function getDroidWorldPosition(droid) {
-    if (
-        !animateOrbitsCheckbox.checked
-    ) {
-        return getStationaryDroidPosition(
-            droid
-        );
-    }
-
     return {
         x: droid.x,
         y: droid.y
@@ -2227,61 +2167,80 @@ function updateDroidAnimation(
     ) {
         droid.speed = 0;
         droid.travelTimer += deltaTime;
-    
+
         const target =
-            getDroidBurgerPosition(droid);
-    
+            getDroidBurgerPosition(
+                droid
+            );
+
         const dx =
             target.x - droid.x;
-    
+
         const dy =
             target.y - droid.y;
-    
+
         const distance =
-            Math.hypot(dx, dy);
-    
+            Math.hypot(
+                dx,
+                dy
+            );
+
         if (distance > 0) {
-            const followSpeed = 0.12;
-    
+            const followSpeed =
+                0.12;
+
             const moveDistance =
                 Math.min(
                     distance,
-                    followSpeed * deltaTime
+                    followSpeed *
+                        deltaTime
                 );
-    
+
             droid.x +=
                 dx / distance *
                 moveDistance;
-    
+
             droid.y +=
                 dy / distance *
                 moveDistance;
         }
-    
+
         if (
-            droid.travelTimer >= 15
+            droid.travelTimer >=
+            15
         ) {
             droid.travelTimer = 0;
-    
+
             const targets = [
                 ...droid.system.centerObjects,
                 ...droid.system.planets
             ];
-            
+
             for (
-                const planet of droid.system.planets
+                const planet
+                of droid.system.planets
             ) {
-                for (const moon of planet.moons) {
-                    if (moon !== droid.parent) {
-                        targets.push(moon);
+                for (
+                    const moon
+                    of planet.moons
+                ) {
+                    if (
+                        moon !==
+                        droid.parent
+                    ) {
+                        targets.push(
+                            moon
+                        );
                     }
                 }
             }
-            
-            if (targets.length === 0) {
+
+            if (
+                targets.length === 0
+            ) {
                 return;
             }
-            
+
             droid.targetPlanet =
                 targets[
                     Math.floor(
@@ -2289,64 +2248,73 @@ function updateDroidAnimation(
                         targets.length
                     )
                 ];
-    
+
             droid.targetAngle =
                 Math.random() *
-                Math.PI * 2;
-    
+                Math.PI *
+                2;
+
             droid.travelState =
                 "toPlanet";
         }
-    
+
         return;
     }
 
-    
     if (
         droid.travelState ===
         "planetWait"
     ) {
         droid.speed = 0;
         droid.travelTimer += deltaTime;
-    
+
         const target =
-            getDroidPlanetPosition(droid);
-    
+            getDroidPlanetPosition(
+                droid
+            );
+
         const dx =
             target.x - droid.x;
-    
+
         const dy =
             target.y - droid.y;
-    
+
         const distance =
-            Math.hypot(dx, dy);
-    
+            Math.hypot(
+                dx,
+                dy
+            );
+
         if (distance > 0) {
-            const followSpeed = 0.12;
-    
+            const followSpeed =
+                0.12;
+
             const moveDistance =
                 Math.min(
                     distance,
-                    followSpeed * deltaTime
+                    followSpeed *
+                        deltaTime
                 );
-    
+
             droid.x +=
                 dx / distance *
                 moveDistance;
-    
+
             droid.y +=
                 dy / distance *
                 moveDistance;
         }
-    
+
         if (
-            droid.travelTimer >= 15
+            droid.travelTimer >=
+            15
         ) {
             droid.travelTimer = 0;
+
             droid.travelState =
                 "toBurger";
         }
-    
+
         return;
     }
 
@@ -2369,10 +2337,12 @@ function updateDroidAnimation(
     }
 
     const dx =
-        target.x - droid.x;
+        target.x -
+        droid.x;
 
     const dy =
-        target.y - droid.y;
+        target.y -
+        droid.y;
 
     const distance =
         Math.hypot(
@@ -2380,11 +2350,21 @@ function updateDroidAnimation(
             dy
         );
 
-    if (distance < 0.002) {
-        droid.x = target.x;
-        droid.y = target.y;
-        droid.speed = 0;
-        droid.travelTimer = 0;
+    const arrivalDistance =
+        0.002;
+
+    if (
+        distance <=
+        arrivalDistance
+    ) {
+        droid.x =
+            target.x;
+
+        droid.y =
+            target.y;
+
+        droid.speed =
+            0;
 
         if (
             droid.travelState ===
@@ -2396,13 +2376,16 @@ function updateDroidAnimation(
         else {
             droid.travelState =
                 "burgerWait";
-            droid.targetPlanet = null;
+
+            droid.targetPlanet =
+                null;
         }
 
         return;
     }
 
-    const acceleration = 0.02;
+    const acceleration =
+        0.025;
 
     droid.speed =
         Math.min(
@@ -2411,30 +2394,6 @@ function updateDroidAnimation(
                 acceleration *
                 deltaTime
         );
-
-    const braking = 0.06;
-
-    const stoppingDistance =
-        (
-            droid.speed *
-            droid.speed
-        ) /
-        (
-            2 * braking
-        );
-
-    if (
-        distance <
-        stoppingDistance + 0.04
-    ) {
-        droid.speed =
-            Math.max(
-                0,
-                droid.speed -
-                    braking *
-                    deltaTime
-            );
-    }
 
     const moveDistance =
         Math.min(
@@ -2451,7 +2410,6 @@ function updateDroidAnimation(
         dy / distance *
         moveDistance;
 }
-
 
 function populateDroids() {
     state.droids = [];
