@@ -1049,6 +1049,19 @@ async function loadData() {
 		buildConnections();
 		initializeOrbitAngles();
 
+        for (const droid of state.droids) {
+            const position =
+                getStationaryDroidPosition(droid);
+
+            droid.x = position.x;
+            droid.y = position.y;
+
+            droid.travelState = "burgerWait";
+            droid.travelTimer = 0;
+            droid.targetPlanet = null;
+            droid.speed = 0;
+        }
+
         updateStatus();
 
         resetView();
@@ -1907,11 +1920,18 @@ function updateOrbitAnimation(deltaTime) {
             planet.orbitAngle +=
                 planet.orbitSpeed *
                 deltaTime;
-
+        
             for (const moon of planet.moons) {
                 moon.orbitAngle +=
                     moon.orbitSpeed *
                     deltaTime;
+        
+                for (const droid of moon.droids) {
+                    updateDroidAnimation(
+                        droid,
+                        deltaTime
+                    );
+                }
             }
         }
     }
@@ -2034,19 +2054,22 @@ function getMoonWorldPosition(moon) {
 }
 
 
-function getDroidWorldPosition(droid) {
+function getStationaryDroidPosition(droid) {
     const moon =
         droid.parent;
 
     const moonPosition =
-        getMoonWorldPosition(moon);
+        getMoonWorldPosition(
+            moon
+        );
 
     const count =
         droid.droidCount;
 
     const angle =
         (
-            droid.droidIndex / count
+            droid.droidIndex /
+            count
         ) *
         Math.PI * 2 +
         moon.orbitAngle;
@@ -2065,6 +2088,387 @@ function getDroidWorldPosition(droid) {
             Math.sin(angle) *
             distance
     };
+}
+
+
+function getDroidBurgerPosition(droid) {
+    return getStationaryDroidPosition(droid);
+}
+
+
+function getDroidPlanetPosition(droid) {
+    const object =
+        droid.targetPlanet;
+
+    let objectPosition;
+    let distance;
+
+    if (object.role === "planet") {
+        objectPosition =
+            getPlanetWorldPosition(
+                object
+            );
+
+        distance =
+            object.baseRadius + 0.08;
+    }
+    else if (object.role === "moon") {
+        objectPosition =
+            getMoonWorldPosition(
+                object
+            );
+
+        distance =
+            object.baseRadius + 0.08;
+    }
+    else {
+        objectPosition = {
+            x: object.row.X,
+            y: object.row.Y
+        };
+
+        distance =
+            object.baseRadius + 0.08;
+    }
+
+    return {
+        x:
+            objectPosition.x +
+            Math.cos(
+                droid.targetAngle
+            ) *
+            distance,
+
+        y:
+            objectPosition.y +
+            Math.sin(
+                droid.targetAngle
+            ) *
+            distance
+    };
+}
+
+
+function getTravelProgress(progress) {
+    const ramp = 0.1;
+
+    /*
+     * Accelerate for the first 10%,
+     * constant speed for the middle 80%,
+     * decelerate for the final 10%.
+     *
+     * The velocity is normalized so the
+     * total distance is exactly 1.
+     */
+    const speed =
+        1 / (1 - ramp);
+
+    if (progress < ramp) {
+        const t =
+            progress / ramp;
+
+        return (
+            0.5 *
+            ramp *
+            speed *
+            t *
+            t
+        );
+    }
+
+    if (progress > 1 - ramp) {
+        const t =
+            (
+                progress -
+                (1 - ramp)
+            ) / ramp;
+
+        const middleDistance =
+            ramp * 0.5 * speed +
+            (1 - 2 * ramp) * speed;
+
+        return (
+            middleDistance +
+            ramp *
+            speed *
+            (
+                t -
+                0.5 * t * t
+            )
+        );
+    }
+
+    return (
+        ramp * 0.5 * speed +
+        (
+            progress -
+            ramp
+        ) *
+        speed
+    );
+}
+
+
+function getDroidWorldPosition(droid) {
+    if (
+        !animateOrbitsCheckbox.checked
+    ) {
+        return getStationaryDroidPosition(
+            droid
+        );
+    }
+
+    return {
+        x: droid.x,
+        y: droid.y
+    };
+}
+
+
+function updateDroidAnimation(
+    droid,
+    deltaTime
+) {
+    if (
+        droid.travelState ===
+        "burgerWait"
+    ) {
+        droid.speed = 0;
+        droid.travelTimer += deltaTime;
+    
+        const target =
+            getDroidBurgerPosition(droid);
+    
+        const dx =
+            target.x - droid.x;
+    
+        const dy =
+            target.y - droid.y;
+    
+        const distance =
+            Math.hypot(dx, dy);
+    
+        if (distance > 0) {
+            const followSpeed = 0.12;
+    
+            const moveDistance =
+                Math.min(
+                    distance,
+                    followSpeed * deltaTime
+                );
+    
+            droid.x +=
+                dx / distance *
+                moveDistance;
+    
+            droid.y +=
+                dy / distance *
+                moveDistance;
+        }
+    
+        if (
+            droid.travelTimer >= 15
+        ) {
+            droid.travelTimer = 0;
+    
+            const targets = [
+                ...droid.system.centerObjects,
+                ...droid.system.planets
+            ];
+            
+            for (
+                const planet of droid.system.planets
+            ) {
+                for (const moon of planet.moons) {
+                    if (moon !== droid.parent) {
+                        targets.push(moon);
+                    }
+                }
+            }
+            
+            if (targets.length === 0) {
+                return;
+            }
+            
+            droid.targetPlanet =
+                targets[
+                    Math.floor(
+                        Math.random() *
+                        targets.length
+                    )
+                ];
+    
+            droid.targetAngle =
+                Math.random() *
+                Math.PI * 2;
+    
+            droid.travelState =
+                "toPlanet";
+        }
+    
+        return;
+    }
+
+    
+    if (
+        droid.travelState ===
+        "planetWait"
+    ) {
+        droid.speed = 0;
+        droid.travelTimer += deltaTime;
+    
+        const target =
+            getDroidPlanetPosition(droid);
+    
+        const dx =
+            target.x - droid.x;
+    
+        const dy =
+            target.y - droid.y;
+    
+        const distance =
+            Math.hypot(dx, dy);
+    
+        /*
+         * Follow the planet smoothly rather than
+         * snapping to its new position.
+         */
+        if (distance > 0) {
+            const followSpeed = 0.12;
+    
+            const moveDistance =
+                Math.min(
+                    distance,
+                    followSpeed * deltaTime
+                );
+    
+            droid.x +=
+                dx / distance *
+                moveDistance;
+    
+            droid.y +=
+                dy / distance *
+                moveDistance;
+        }
+    
+        if (
+            droid.travelTimer >= 15
+        ) {
+            droid.travelTimer = 0;
+            droid.travelState =
+                "toBurger";
+        }
+    
+        return;
+    }
+
+    let target;
+
+    if (
+        droid.travelState ===
+        "toPlanet"
+    ) {
+        target =
+            getDroidPlanetPosition(
+                droid
+            );
+    }
+    else {
+        target =
+            getDroidBurgerPosition(
+                droid
+            );
+    }
+
+    const dx =
+        target.x - droid.x;
+
+    const dy =
+        target.y - droid.y;
+
+    const distance =
+        Math.hypot(
+            dx,
+            dy
+        );
+
+    if (distance < 0.002) {
+        droid.x = target.x;
+        droid.y = target.y;
+        droid.speed = 0;
+        droid.travelTimer = 0;
+
+        if (
+            droid.travelState ===
+            "toPlanet"
+        ) {
+            droid.travelState =
+                "planetWait";
+        }
+        else {
+            droid.travelState =
+                "burgerWait";
+            droid.targetPlanet = null;
+        }
+
+        return;
+    }
+
+    /*
+     * Accelerate toward cruise speed.
+     */
+    const acceleration = 0.02;
+
+    droid.speed =
+        Math.min(
+            droid.maxSpeed,
+            droid.speed +
+                acceleration *
+                deltaTime
+        );
+
+    /*
+     * Begin braking when there isn't
+     * enough distance left to stop.
+     */
+    const braking = 0.06;
+
+    const stoppingDistance =
+        (
+            droid.speed *
+            droid.speed
+        ) /
+        (
+            2 * braking
+        );
+
+    if (
+        distance <
+        stoppingDistance + 0.04
+    ) {
+        droid.speed =
+            Math.max(
+                0,
+                droid.speed -
+                    braking *
+                    deltaTime
+            );
+    }
+
+    const moveDistance =
+        Math.min(
+            distance,
+            droid.speed *
+                deltaTime
+        );
+
+    droid.x +=
+        dx / distance *
+        moveDistance;
+
+    droid.y +=
+        dy / distance *
+        moveDistance;
 }
 
 
@@ -2127,8 +2531,28 @@ function populateDroids() {
                         searchMatch: false,
 
                         droidIndex: i,
-                        droidCount: matches.length
+                        droidCount: matches.length,
+
+                        travelState: "burgerWait",
+                        travelTimer: 0,
+
+                        targetPlanet: null,
+                        targetAngle: 0,
+
+                        x: 0,
+                        y: 0,
+
+                        speed: 0,
+                        maxSpeed: 0.08
                     };
+
+                    const position =
+                    getStationaryDroidPosition(
+                        droid
+                    );
+                
+                    droid.x = position.x;
+                    droid.y = position.y;
 
                     moon.droids.push(droid);
                     state.droids.push(droid);
@@ -7098,10 +7522,8 @@ window.addEventListener(
 
 
 const clarkState = {
-    x: Math.random() * CONFIG.MAP_MAX,
-    y: Math.random() * CONFIG.MAP_MAX,
-
-    nextTeleportTime: 0,
+    x: Math.random() * CONFIG.MAP_MAX * 67,
+    y: Math.random() * CONFIG.MAP_MAX * 67,
 
     image: new Image(),
     audio: new Audio("data/clark.ogg")
@@ -7115,53 +7537,57 @@ clarkState.image.src =
 clarkState.audio.preload = "auto";
 
 
-function teleportClark(timestamp) {
-    clarkState.x =
-        Math.random() * CONFIG.MAP_MAX;
+const updateClark = (() => {
+    let nextTeleportTime = 0;
 
-    clarkState.y =
-        Math.random() * CONFIG.MAP_MAX;
+    return function(timestamp) {
+        if (
+            timestamp >=
+            nextTeleportTime
+        ) {
+            clarkState.x =
+                Math.random() *
+                CONFIG.MAP_MAX *
+                67;
 
-    clarkState.nextTeleportTime =
-        timestamp + 3000;
+            clarkState.y =
+                Math.random() *
+                CONFIG.MAP_MAX *
+                67;
 
-    if (
-        state.camera.zoom >=
-        CONFIG.OBJECT_LABEL_ZOOM
-    ) {
-        const screen =
-            worldToScreen(
-                clarkState.x,
-                clarkState.y
-            );
+            nextTeleportTime =
+                timestamp + 3000;
 
-        const visible =
-            screen.x >= 0 &&
-            screen.x <= state.canvasWidth &&
-            screen.y >= 0 &&
-            screen.y <= state.canvasHeight;
+            if (
+                state.camera.zoom >=
+                CONFIG.OBJECT_LABEL_ZOOM
+            ) {
+                const screen =
+                    worldToScreen(
+                        clarkState.x / 67,
+                        clarkState.y / 67
+                    );
 
-        if (visible) {
-            try {
-                clarkState.audio.currentTime = 0;
-                clarkState.audio.play();
-            }
-            catch (error) {
+                const visible =
+                    screen.x >= 0 &&
+                    screen.x <=
+                        state.canvasWidth &&
+                    screen.y >= 0 &&
+                    screen.y <=
+                        state.canvasHeight;
 
+                if (visible) {
+                    try {
+                        clarkState.audio.currentTime = 0;
+                        clarkState.audio.play();
+                    }
+                    catch (error) {
+                    }
+                }
             }
         }
-    }
-}
-
-
-function updateClark(timestamp) {
-    if (
-        timestamp >=
-        clarkState.nextTeleportTime
-    ) {
-        teleportClark(timestamp);
-    }
-}
+    };
+})();
 
 
 const clarkG =
@@ -7193,8 +7619,8 @@ function drawClark() {
     
     const screen =
         worldToScreen(
-            clarkState.x,
-            clarkState.y
+            clarkState.x / 67,
+            clarkState.y / 67
         );
     
     const height =
