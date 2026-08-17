@@ -3132,10 +3132,10 @@
 3131	481	392	Alpha Anaideia	Anaideia	Terran planet	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
 3132	481	392	Beta Anaideia	Anaideia	Inferno	FALSE	TRUE	FALSE	FALSE	FALSE			Enceladus
 3133	481	392	Outlet 15800.12848	Anaideia	Gus's Gas	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
-3134	460	414	Cocytus	Cocytus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Haemus	Enceladus
-3135	460	414	Alpha Cocytus	Cocytus	Alien world	FALSE	FALSE	TRUE	FALSE	FALSE			Enceladus
-3136	460	414	Beta Cocytus	Cocytus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
-3137	460	414	Gamma Cocytus	Cocytus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
+3134	468	414	Cocytus	Cocytus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Haemus	Enceladus
+3135	468	414	Alpha Cocytus	Cocytus	Alien world	FALSE	FALSE	TRUE	FALSE	FALSE			Enceladus
+3136	468	414	Beta Cocytus	Cocytus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
+3137	468	414	Gamma Cocytus	Cocytus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
 3138	466	434	Haemus	Haemus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Althaemenes, Cocytus, Celaeno	Enceladus
 3139	466	434	Alpha Haemus	Haemus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Enceladus
 3140	466	434	Psi Haemus	Haemus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Enceladus
@@ -6226,15 +6226,15 @@
 6225	902	776	Asteria dealership	Asteria	Heroware	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
 6226	902	776	Chi Asteria	Asteria	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
 6227	902	776	Phi Asteria	Asteria	Artificial moon	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
-6228	910	746	Cadmus	Cadmus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Asteria, Tyres	Phyleus
-6229	910	746	Alpha Cadmus	Cadmus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
-6230	910	746	Cadmus station	Cadmus	Aftermarket Station	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
-6231	910	746	Gamma Cadmus	Cadmus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
-6232	910	746	Cadmus campus	Cadmus	Heroes Academy	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
-6233	910	746	Upsilon Cadmus	Cadmus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
-6234	910	746	Outlet 30245.24461	Cadmus	Gus's Gas	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
-6235	910	746	Sigma Cadmus	Cadmus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
-6236	910	746	Rho Cadmus	Cadmus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
+6228	918	746	Cadmus	Cadmus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Asteria, Tyres	Phyleus
+6229	918	746	Alpha Cadmus	Cadmus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
+6230	918	746	Cadmus station	Cadmus	Aftermarket Station	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
+6231	918	746	Gamma Cadmus	Cadmus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
+6232	918	746	Cadmus campus	Cadmus	Heroes Academy	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
+6233	918	746	Upsilon Cadmus	Cadmus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
+6234	918	746	Outlet 30245.24461	Cadmus	Gus's Gas	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
+6235	918	746	Sigma Cadmus	Cadmus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
+6236	918	746	Rho Cadmus	Cadmus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Phyleus
 6237	940	789	Tyres	Tyres	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Cadmus, Polycaon, Pistis	Phyleus
 6238	940	789	Alpha Tyres	Tyres	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
 6239	940	789	Tyres dealership	Tyres	Heroware	FALSE	FALSE	FALSE	FALSE	FALSE			Phyleus
