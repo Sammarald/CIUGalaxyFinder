@@ -297,14 +297,14 @@ label {
 
 #optionsPanel {
     width: min(320px, calc(100vw - 32px));
-    max-height: calc(100vh - 16px - 120px);
+    max-height: calc(100dvh - 16px - 120px);
 
     overflow: hidden;
 }
 
 #searchResultsPanel {
     width: min(320px, calc(100vw - 32px));
-    max-height: calc(100vh - 16px - 120px);
+    max-height: calc(100dvh - 16px - 120px);
 
     overflow: hidden;
 }
@@ -321,7 +321,7 @@ label {
 }
 
 #searchResultsList {
-    max-height: calc(100vh - 16px - 120px);
+    max-height: calc(100dvh - 16px - 120px);
 
     overflow-y: auto;
     overflow-x: hidden;
@@ -509,7 +509,7 @@ label {
 }
 
 #optionsList {
-    max-height: calc(100vh - 16px - 120px);
+    max-height: calc(100dvh - 16px - 120px);
 
     overflow-y: auto;
     overflow-x: hidden;
