@@ -965,6 +965,7 @@ label {
         width: 32px;
         height: 32px;
         font-size: 21px;
+        padding-top: 2px;
     }
 
     #menuControls {

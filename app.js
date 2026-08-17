@@ -2867,7 +2867,7 @@ function drawSearchIndicator(
     ctx.textBaseline = "middle";
 
     ctx.font =
-        "700 ${12 * scale}px system-ui, sans-serif";
+        `${12 * scale}px system-ui, sans-serif`;
 
     ctx.fillStyle = color;
 
