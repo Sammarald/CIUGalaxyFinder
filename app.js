@@ -3302,7 +3302,10 @@ function drawCentralObject(system) {
             );
 
         const starColor =
-            getStarColor(system);
+            getStarColor(
+                system,
+                i
+            );
 
         const alpha =
             state.camera.zoom <
@@ -4174,7 +4177,15 @@ function getSearchResultColor(object) {
         object.type === "Sun" ||
         object.type === "Binary Sun"
     ) {
-        return getStarColor(object.system);
+        const starIndex =
+            object.system.centerObjects.indexOf(
+                object
+            );
+
+        return getStarColor(
+            object.system,
+            starIndex
+        );
     }
 
     if (object.type === "Wormhole") {
@@ -5170,26 +5181,54 @@ function getSearchResultObjects() {
     return results;
 }
 
-function getStarColor(system) {
-    const planetCount = system.planets.length;
+function getStarColor(system, starIndex = 0) {
+    const planetCount =
+        system.planets.length;
 
-    if (planetCount <= 1) {
-        return "#FF3F00";
+    const primaryColor =
+        planetCount <= 1
+            ? "#FF3F00"
+            : planetCount === 2
+                ? "#FF7F00"
+                : planetCount === 3
+                    ? "#FFFF00"
+                    : planetCount === 4
+                        ? "#FFFF7F"
+                        : planetCount === 5
+                        ? "#00FFFF" : "#7FFFFF"
+
+    if (
+        !system.isBinary ||
+        starIndex === 0
+    ) {
+        return primaryColor;
     }
 
-    if (planetCount === 2) {
-        return "#FF7F00";
-    }
+    const colors = [
+        "#FF3F00",
+        "#FF7F00",
+        "#FFFF00",
+        "#FFFF7F",
+        "#00FFFF"
+    ];
 
-    if (planetCount === 3) {
-        return "#FFFF00";
-    }
+    const value =
+        Math.sin(
+            system.x * 12.9898 +
+            system.y * 78.233 +
+            45.164
+        ) *
+        43758.5453;
 
-    if (planetCount === 4) {
-        return "#FFFF7F";
-    }
+    const fraction =
+        value -
+        Math.floor(value);
 
-    return "#00FFFF"; // 5+ planets
+    return colors[
+        Math.floor(
+            fraction * colors.length
+        )
+    ];
 }
 
 
