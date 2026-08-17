@@ -1790,13 +1790,13 @@
 1789	784	70	Upsilon Comus	Comus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Theonoe
 1790	784	70	Zeta Comus	Comus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
 1791	784	70	Sigma Comus	Comus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Theonoe
-1792	781	82	Atë	Atë	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Phlias	Theonoe
-1793	781	82	Alpha Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
-1794	781	82	Beta Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
-1795	781	82	Madam Rumer	Atë	Fortune Teller	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
-1796	781	82	Delta Atë	Atë	Frozen wasteland	FALSE	FALSE	FALSE	TRUE	FALSE			Theonoe
-1797	781	82	Epsilon Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
-1798	781	82	Tau Atë	Atë	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Theonoe
+1792	781	52	Atë	Atë	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Phlias	Theonoe
+1793	781	52	Alpha Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
+1794	781	52	Beta Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
+1795	781	52	Madam Rumer	Atë	Fortune Teller	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
+1796	781	52	Delta Atë	Atë	Frozen wasteland	FALSE	FALSE	FALSE	TRUE	FALSE			Theonoe
+1797	781	52	Epsilon Atë	Atë	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Theonoe
+1798	781	52	Tau Atë	Atë	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Theonoe
 1799	767	63	Physcoa	Physcoa	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Phlias	Theonoe
 1800	767	63	Alpha Physcoa	Physcoa	Inferno	FALSE	TRUE	TRUE	FALSE	FALSE			Theonoe
 1801	788	35	Tegeates	Tegeates	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Botres, Attis	Theonoe
@@ -4232,7 +4232,7 @@
 4231	123	865	Agasthenes campus	Agasthenes	Heroes Academy	FALSE	FALSE	FALSE	FALSE	FALSE			Telegonus
 4232	123	865	Chi Agasthenes	Agasthenes	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Telegonus
 4233	78	825	Pontos Majoris	Pontos	Binary Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Arke	Anthousai
-4234	79	825	Pontos Minoris	Pontos	Binary Sun	TRUE	TRUE	FALSE	FALSE	FALSE			Anthousai
+4234	78	825	Pontos Minoris	Pontos	Binary Sun	TRUE	TRUE	FALSE	FALSE	FALSE			Anthousai
 4235	78	825	Alpha Pontos	Pontos	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Anthousai
 4236	78	825	Khonuum	Pontos	Asteroid belt	FALSE	FALSE	FALSE	TRUE	FALSE			Anthousai
 4237	20	900	Polynices	Polynices	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Eribotes	Anthousai
