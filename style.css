@@ -953,6 +953,14 @@ label {
 }
 
 @media (max-width: 600px) {
+    html,
+    body,
+    #app,
+    #mapContainer {
+        height: 100dvh;
+        min-height: 100dvh;
+    }
+
     #menuButton {
         width: 32px;
         height: 32px;
@@ -1024,12 +1032,12 @@ label {
     #searchResultsPanel {
         width: 150px;
         max-width: 150px;
-        max-height: calc(100vh - 65px);
+        max-height: calc(100dvh - 65px);
     }
 
     #optionsList,
     #searchResultsList {
-        max-height: calc(100vh - 65px);
+        max-height: calc(100dvh - 65px);
     }
 
     .options-group {
