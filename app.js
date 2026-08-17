@@ -2152,14 +2152,6 @@ function getDroidPlanetPosition(droid) {
 function getTravelProgress(progress) {
     const ramp = 0.1;
 
-    /*
-     * Accelerate for the first 10%,
-     * constant speed for the middle 80%,
-     * decelerate for the final 10%.
-     *
-     * The velocity is normalized so the
-     * total distance is exactly 1.
-     */
     const speed =
         1 / (1 - ramp);
 
@@ -2329,10 +2321,6 @@ function updateDroidAnimation(
         const distance =
             Math.hypot(dx, dy);
     
-        /*
-         * Follow the planet smoothly rather than
-         * snapping to its new position.
-         */
         if (distance > 0) {
             const followSpeed = 0.12;
     
@@ -2414,9 +2402,6 @@ function updateDroidAnimation(
         return;
     }
 
-    /*
-     * Accelerate toward cruise speed.
-     */
     const acceleration = 0.02;
 
     droid.speed =
@@ -2427,10 +2412,6 @@ function updateDroidAnimation(
                 deltaTime
         );
 
-    /*
-     * Begin braking when there isn't
-     * enough distance left to stop.
-     */
     const braking = 0.06;
 
     const stoppingDistance =
