@@ -43,6 +43,166 @@ const ENVIRONMENTS = [
     "Frozen"
 ];
 
+const EQUIPMENT_SPREADSHEET_ID = "1SkezvomQiJ90fGVRzii7LGNtBW5VueIM"
+
+const EQUIPMENT_LAYOUTS = {
+    other: {
+        legendaryColumn: "L",
+        rareColumns: ["M", "N", "O"]
+    },
+
+    spacecraft: {
+        legendaryColumn: "E",
+        rareColumns: ["F", "G", "H"]
+    }
+};
+
+const EQUIPMENT_TYPES = [
+    {
+        name: "Electrostatic Thruster",
+        fullName: "Electrostatic Ion Thruster",
+        row: 16,
+        layout: "other"
+    },
+    {
+        name: "Hall-Effect Thruster",
+        row: 13,
+        layout: "other"
+    },
+    {
+        name: "Magnetospheric Thruster",
+        fullName: "Magnetospheric Plasma Thruster",
+        row: 14,
+        layout: "other"
+    },
+    {
+        name: "Pulsed Thruster",
+        fullName: "Pulsed-Inductive Thruster",
+        row: 15,
+        layout: "other"
+    },
+    {
+        name: "Aluminum Heat Sink",
+        fullName: "Aluminum Nitride Heat Sink",
+        row: 11,
+        layout: "other"
+    },
+    {
+        name: "Beryllium Heat Sink",
+        fullName: "Beryllium Oxide Heat Sink",
+        row: 9,
+        layout: "other"
+    },
+    {
+        name: "Copper Heat Sink",
+        row: 12,
+        layout: "other"
+    },
+    {
+        name: "Cubic Heat Sink",
+        fullName: "Cubic Boron Arsenide Heat Sink",
+        row: 8,
+        layout: "other"
+    },
+    {
+        name: "Pyrolytic Heat Sink",
+        fullName: "Pyrolytic Graphite Heat Sink",
+        row: 10,
+        layout: "other"
+    },
+    {
+        name: "Mr. Fusion Reactor",
+        fullName: "Mr. Fusion Plutonium Reactor",
+        row: 19,
+        layout: "other"
+    },
+    {
+        name: "Proton Reactor",
+        fullName: "Proton-Proton Chain Reactor",
+        row: 17,
+        layout: "other"
+    },
+    {
+        name: "Uranium Reactor",
+        fullName: "Uranium Fission Reactor",
+        row: 18,
+        layout: "other"
+    },
+
+    {
+        name: "BX-7",
+        fullName: "BX-7 Excalibur",
+        row: 14,
+        layout: "spacecraft"
+    },
+    {
+        name: "BX-8",
+        fullName: "BX-8 Ukonvasara",
+        row: 15,
+        layout: "spacecraft"
+    },
+    {
+        name: "BX-9",
+        fullName: "BX-9 Mjölnir",
+        row: 16,
+        layout: "spacecraft"
+    },
+    {
+        name: "H&C 101",
+        fullName: "H&C 101 Hatchling",
+        row: 8,
+        layout: "spacecraft"
+    },
+    {
+        name: "H&C 201",
+        fullName: "H&C 201 Pullet",
+        row: 9,
+        layout: "spacecraft"
+    },
+    {
+        name: "H&C 301",
+        fullName: "H&C 301 Cockerel",
+        row: 10,
+        layout: "spacecraft"
+    },
+    {
+        name: "M400",
+        fullName: "M400 Caterer",
+        row: 11,
+        layout: "spacecraft"
+    },
+    {
+        name: "M404-PI",
+        fullName: "M404-PI Deliverer",
+        row: 12,
+        layout: "spacecraft"
+    },
+    {
+        name: "M408",
+        fullName: "M408 Cuisinier",
+        row: 13,
+        layout: "spacecraft"
+    },
+    {
+        name: "VF-56",
+        fullName: "VF-56 Starling",
+        row: 17,
+        layout: "spacecraft"
+    },
+    {
+        name: "VF-66",
+        fullName: "VF-66 Jackdaw",
+        row: 18,
+        layout: "spacecraft"
+    },
+    {
+        name: "VF-76",
+        fullName: "VF-76 Raven",
+        row: 19,
+        layout: "spacecraft"
+    }
+];
+
 const pointerState = {
     active: new Map(),
 
@@ -103,12 +263,6 @@ function setControlsEnabled(enabled) {
         !enabled;
 
     backButton.disabled =
-        !enabled;
-
-    planetSearchModeButton.disabled =
-        !enabled;
-
-    missionSearchModeButton.disabled =
         !enabled;
 
     focusedMissionButton.disabled =
@@ -221,6 +375,9 @@ const planetSearchModeButton =
 const missionSearchModeButton =
     document.getElementById("missionSearchModeButton");
 
+const equipmentSearchModeButton =
+    document.getElementById("equipmentSearchModeButton");
+
 const focusedMissionControls =
     document.getElementById("focusedMissionControls");
 
@@ -274,6 +431,15 @@ const resetFiltersButton =
 
 const searchResultsEmpty =
     document.getElementById("searchResultsEmpty");
+
+const standardSearchFilters =
+    document.getElementById("standardSearchFilters");
+
+const equipmentSearchFilters =
+    document.getElementById("equipmentSearchFilters");
+
+const focusedMissionButtonText =
+    document.getElementById("focusedMissionButtonText");
     
 setControlsEnabled(false);
 
@@ -303,7 +469,10 @@ setControlsEnabled(false);
     backButton.addEventListener(
         "click",
         () => {
-            if (state.focusedMissionListMode) {
+            if (
+                state.focusedMissionListMode ||
+                state.focusedEquipmentListMode
+            ) {
                 exitFocusedMissionMode();
                 return;
             }
@@ -356,8 +525,26 @@ setControlsEnabled(false);
         "click",
         () => {
             let modes;
-    
+
             if (
+                state.searchListContent ===
+                "equipment"
+            ) {
+                modes =
+                    state.focusedEquipmentListMode
+                        ? [
+                            "internal",
+                            "name",
+                            "rarity"
+                        ]
+                        : [
+                            "internal",
+                            "proximity",
+                            "name",
+                            "rarity"
+                        ];
+            }
+            else if (
                 state.searchListContent === "missions"
             ) {
                 modes =
@@ -438,6 +625,22 @@ setControlsEnabled(false);
         }
     );
 
+function updateSearchFilterVisibility() {
+    const equipmentMode =
+        state.searchListView ===
+        "equipment";
+
+    standardSearchFilters.classList.toggle(
+        "hidden",
+        equipmentMode
+    );
+
+    equipmentSearchFilters.classList.toggle(
+        "hidden",
+        !equipmentMode
+    );
+}
+
     planetSearchModeButton.addEventListener(
         "click",
         () => {
@@ -446,10 +649,12 @@ setControlsEnabled(false);
     
             planetSearchModeButton.classList.add("active");
             missionSearchModeButton.classList.remove("active");
+            equipmentSearchModeButton.classList.remove("active");
 
             state.searchSortMode = "internal";
             sortSearchLabel.textContent = "Default";
 
+            updateSearchFilterVisibility();
             updateMissionSearchResults();
             updateSearchMatches();
             updateStatus();
@@ -471,10 +676,12 @@ setControlsEnabled(false);
     
             missionSearchModeButton.classList.add("active");
             planetSearchModeButton.classList.remove("active");
+            equipmentSearchModeButton.classList.remove("active");
 
             state.searchSortMode = "internal";
             sortSearchLabel.textContent = "Default";
 
+            updateSearchFilterVisibility();
             updateMissionSearchResults();
             updateSearchMatches();
             updateStatus();
@@ -486,6 +693,28 @@ setControlsEnabled(false);
             }
         }
     );
+
+    equipmentSearchModeButton.addEventListener(
+        "click",
+        () => {
+            state.searchListView ="equipment";
+            state.searchListContent ="equipment";
+    
+            planetSearchModeButton.classList.remove("active");
+            missionSearchModeButton.classList.remove("active");
+            equipmentSearchModeButton.classList.add("active");
+    
+            state.searchSortMode ="internal";
+            sortSearchLabel.textContent ="Default";
+    
+            updateSearchFilterVisibility();
+            updateStatus();
+            updateSearchResultsList();
+            render();
+        }
+    );
+
+    
 
 
 missionWavesMinSlider.addEventListener(
@@ -544,6 +773,7 @@ const state = {
     searchListContent: "planets",
     searchSortMode: "internal",
     focusedMissionListMode: false,
+    focusedEquipmentListMode: false,
 
     environmentFilters: {
         Massive: 0,
@@ -568,6 +798,14 @@ const state = {
     missionCountsByObject: new Map(),
     missionCountsBySystem: new Map(),
     missionCountsByConstellation: new Map(),
+
+    equipmentChartOutdated: false,
+    equipmentData: [],
+    equipment: [],
+    equipmentFilters: {
+        rarities: new Set(),
+        types: new Set()
+    },
 
     camera: {
         zoom: CONFIG.INITIAL_ZOOM,
@@ -967,6 +1205,9 @@ async function loadData() {
             );
         }
 
+        statusElement.textContent =
+            "Loading constellations.json...";
+
         console.log(
             "Loading constellations.json..."
         );
@@ -987,6 +1228,9 @@ async function loadData() {
 
         state.constellationData =
             await constellationResponse.json();
+
+        statusElement.textContent =
+            "Loading missions.tsv...";
 
         console.log(
             "Loading missions.tsv..."
@@ -1021,6 +1265,9 @@ async function loadData() {
         console.log(
             `Parsed ${state.missions.length.toLocaleString()} missions.`
         );
+
+        statusElement.textContent =
+            "Building the galaxy...";
             
         state.systemsByName =
             buildSystems(state.rows);
@@ -1045,6 +1292,37 @@ async function loadData() {
         populateDroids();
         associateMissions();
         updateMissionSearchResults();
+
+        statusElement.textContent =
+            "Loading equipment data...";
+
+        const equipmentResponse =
+            await fetch(
+                "data/equipment.json",
+                {
+                    cache: "no-cache"
+                }
+            );
+
+        if (!equipmentResponse.ok) {
+            throw new Error(
+                `Could not load equipment.json: HTTP ${equipmentResponse.status}`
+            );
+        }
+
+        state.equipmentData =
+            await equipmentResponse.json();
+
+        console.log(
+            `Loaded ${state.equipmentData.length} equipment definitions.`
+        );
+        
+        statusElement.textContent =
+            "Loading the Legendary tracking chart integration...";
+        loadTrackingChart();
+
+        statusElement.textContent =
+            "Finishing the galaxy...";
 
 		buildConnections();
 		initializeOrbitAngles();
@@ -1123,6 +1401,305 @@ async function loadData() {
             "ERROR: " + error.message;
 
         ctx.restore();
+    }
+}
+
+
+// Legendary tracking chart integration
+async function fetchSheetRange(range) {
+    const url =
+        "https://docs.google.com/spreadsheets/d/" +
+        EQUIPMENT_SPREADSHEET_ID +
+        "/gviz/tq" +
+        "?tqx=out:json" +
+        `&range=${encodeURIComponent(range)}`;
+
+    const response =
+        await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(
+            `Google Sheets request failed: HTTP ${response.status}`
+        );
+    }
+
+    const text =
+        await response.text();
+
+    const jsonText =
+        text.substring(
+            text.indexOf("(") + 1,
+            text.lastIndexOf(")")
+        );
+
+    return JSON.parse(jsonText);
+}
+
+
+function getSheetValue(data, row = 0, column = 0) {
+    return String(
+        data.table.rows[row]?.c[column]?.v ?? ""
+    ).trim();
+}
+
+
+async function loadTrackingChart() {
+    state.equipment = [];
+    state.equipmentChartOutdated = false;
+
+    const statusData =
+        await fetchSheetRange("I5");
+
+    const status =
+        getSheetValue(statusData);
+
+    console.log(
+        "Equipment chart status:",
+        status
+    );
+
+    if (
+        status ===
+        "STATUS: OUTDATED"
+    ) {
+        console.warn(
+            "Equipment chart is outdated."
+        );
+        state.equipmentChartOutdated = true;
+
+        return;
+    }
+
+    const equipmentData =
+        await fetchSheetRange(
+            "E8:O19"
+        );
+
+    for (
+        const equipment
+        of EQUIPMENT_TYPES
+    ) {
+        const layout =
+            EQUIPMENT_LAYOUTS[
+                equipment.layout
+            ];
+
+        const columnIndex = {
+            E: 0,
+            F: 1,
+            G: 2,
+            H: 3,
+            I: 4,
+            J: 5,
+            K: 6,
+            L: 7,
+            M: 8,
+            N: 9,
+            O: 10
+        };
+
+        // equipment.row is the actual spreadsheet row number
+        const rowIndex =
+            equipment.row - 8;
+
+        const row =
+            equipmentData.table.rows[
+                rowIndex
+            ];
+
+        if (!row) {
+            continue;
+        }
+
+        const legendaryIndex =
+            columnIndex[
+                layout.legendaryColumn
+            ];
+
+        const legendary =
+            String(
+                row.c[legendaryIndex]?.v ??
+                ""
+            ).trim();
+
+        if (legendary) {
+            state.equipment.push({
+                name:
+                    equipment.name,
+
+                fullName:
+                    equipment.fullName ||
+                    equipment.name,
+
+                rarity:
+                    "legendary",
+
+                coordinates:
+                    legendary,
+
+                category:
+                    getEquipmentCategory(
+                        equipment.name
+                    )
+            });
+        }
+
+        for (
+            const column
+            of layout.rareColumns
+        ) {
+            const index =
+                columnIndex[column];
+
+            const coordinates =
+                String(
+                    row.c[index]?.v ??
+                    ""
+                ).trim();
+
+            if (!coordinates) {
+                continue;
+            }
+
+            state.equipment.push({
+                name:
+                    equipment.name,
+
+                fullName:
+                    equipment.fullName ||
+                    equipment.name,
+
+                rarity:
+                    "rare",
+
+                coordinates,
+
+                category:
+                    getEquipmentCategory(
+                        equipment.name
+                    )
+            });
+        }
+    }
+
+    console.log(
+        `Loaded ${state.equipment.length} equipment locations.`
+    );
+
+    resolveEquipmentLocations();
+    associateEquipmentData();
+}
+
+
+function associateEquipmentData() {
+    for (
+        const equipment
+        of state.equipment
+    ) {
+        const info =
+            state.equipmentData.find(
+                entry =>
+                    entry.name ===
+                        equipment.fullName &&
+                    entry.rarity ===
+                        equipment.rarity
+            );
+
+        if (!info) {
+            console.warn(
+                `No equipment definition found for ` +
+                `"${equipment.fullName}" ` +
+                `(${equipment.rarity})`
+            );
+
+            continue;
+        }
+
+        equipment.info =
+            info;
+    }
+}
+
+
+function resolveEquipmentLocations() {
+    for (const equipment of state.equipment) {
+        const parts =
+            equipment.coordinates
+                .split("+")
+                .map(Number);
+
+        if (
+            parts.length !== 2 ||
+            !Number.isFinite(parts[0]) ||
+            !Number.isFinite(parts[1])
+        ) {
+            console.warn(
+                `Skipping equipment "${equipment.name}" ` +
+                `with invalid coordinates: ` +
+                `"${equipment.coordinates}"`
+            );
+
+            continue;
+        }
+
+        const x = parts[0];
+        const y = parts[1];
+
+        const system =
+            state.systems.find(
+                candidate =>
+                    candidate.x === x &&
+                    candidate.y === y
+            );
+
+        if (!system) {
+            console.warn(
+                `Skipping equipment "${equipment.name}" ` +
+                `at unknown system coordinates ` +
+                `"${equipment.coordinates}"`
+            );
+
+            continue;
+        }
+
+        let heroware = null;
+
+        for (
+            const planet
+            of system.planets
+        ) {
+            for (
+                const moon
+                of planet.moons
+            ) {
+                if (
+                    moon.row.Type ===
+                    "Heroware"
+                ) {
+                    heroware = moon;
+                    break;
+                }
+            }
+
+            if (heroware) {
+                break;
+            }
+        }
+
+        if (!heroware) {
+            console.warn(
+                `Skipping equipment "${equipment.name}" ` +
+                `at ${system.name}, no Heroware...?`
+            );
+
+            continue;
+        }
+
+        equipment.system =
+            system;
+
+        equipment.heroware =
+            heroware;
     }
 }
 
@@ -2506,6 +3083,65 @@ function updateStatus() {
         state.missionSearchCount;
 
     if (
+    isEquipmentMode()
+) {
+    if (
+        state.equipmentChartOutdated
+    ) {
+        statusElement.textContent =
+            "No results due to the Legendary tracking chart being outdated";
+
+        return;
+    }
+
+    const filteredEquipment =
+        state.equipment.filter(
+            equipment =>
+                equipmentMatchesFilters(
+                    equipment
+                )
+        );
+
+    const equipmentCount =
+        filteredEquipment.length;
+
+    const herowareCount =
+        new Set(
+            filteredEquipment
+                .filter(
+                    equipment =>
+                        equipment.heroware
+                )
+                .map(
+                    equipment =>
+                        equipment.heroware
+                )
+        ).size;
+
+    const constellationCount =
+        new Set(
+            filteredEquipment
+                .filter(
+                    equipment =>
+                        equipment.heroware
+                )
+                .map(
+                    equipment =>
+                        equipment.heroware
+                            .system
+                            .constellation
+                )
+        ).size;
+
+    statusElement.textContent =
+        `${equipmentCount.toLocaleString()} equipment · ` +
+        `${herowareCount.toLocaleString()} Herowares · ` +
+        `${constellationCount.toLocaleString()} constellations`;
+
+    return;
+}
+
+    if (
         state.searchListView ===
         "missions"
     ) {
@@ -2637,7 +3273,19 @@ function updateStatus() {
 }
 
 
+function isEquipmentMode() {
+    return (
+        state.searchListView ===
+        "equipment"
+    );
+}
+
+
 function isSearchActive() {
+    if (isEquipmentMode()) {
+        return true;
+    }
+
     if (
         state.searchListView ===
         "missions"
@@ -2718,6 +3366,24 @@ function cycleEnvironmentSearch(environment) {
 
 
 function objectMatchesSearch(object) {
+    if (isEquipmentMode()) {
+        if (
+            object.row.Type !==
+            "Heroware"
+        ) {
+            return false;
+        }
+
+        return state.equipment.some(
+            equipment =>
+                equipment.heroware ===
+                    object &&
+                equipmentMatchesFilters(
+                    equipment
+                )
+        );
+    }
+
     return object.searchMatch === true;
 }
 
@@ -3136,9 +3802,16 @@ function drawLabel(
     y,
     size = 12,
     alpha = 1,
-    color = "#FFFFFF"
+    color = "#FFFFFF",
+    force = false
 ) {
     if (!showLabelsCheckbox.checked) {
+        return;
+    }
+
+    if (
+        isEquipmentMode() && !force
+    ) {
         return;
     }
 
@@ -3188,7 +3861,9 @@ function drawSearchIndicator(
     y,
     color
 ) {
-    if (!isSearchActive()) {
+    
+    if (!isSearchActive() ||
+        isEquipmentMode()) {
         return;
     }
 
@@ -3241,6 +3916,227 @@ function drawSearchIndicator(
     );
 
     ctx.restore();
+}
+
+
+function equipmentMatchesFilters(equipment) {
+    if (
+        state.equipmentFilters.rarities.size > 0 &&
+        !state.equipmentFilters.rarities.has(
+            equipment.rarity
+        )
+    ) {
+        return false;
+    }
+
+    if (
+        state.equipmentFilters.types.size > 0 &&
+        !state.equipmentFilters.types.has(
+            equipment.category
+        )
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
+
+function getHerowareLabelPosition(
+    heroware
+) {
+    if (
+        state.camera.zoom <
+        CONFIG.SYSTEM_DETAIL_ZOOM
+    ) {
+        return getSystemCenter(
+            heroware.system
+        );
+    }
+
+    const worldPosition =
+        getMoonWorldPosition(
+            heroware
+        );
+
+    return worldToScreen(
+        worldPosition.x,
+        worldPosition.y
+    );
+}
+
+
+function drawEquipmentHeroware(
+    heroware,
+    equipment
+) {
+    const position =
+        getHerowareLabelPosition(
+            heroware
+        );
+
+    const scale =
+        getScreenUIScale();
+
+    const lineHeight =
+        15 * scale;
+
+        const sortedEquipment =
+        equipment.slice().sort(
+            (a, b) => {
+                const rarityA =
+                    a.rarity === "legendary"
+                        ? 0
+                        : 1;
+    
+                const rarityB =
+                    b.rarity === "legendary"
+                        ? 0
+                        : 1;
+    
+                return rarityA - rarityB;
+            }
+        );
+    
+    const lines = [
+        {
+            text:
+                heroware.system.name,
+    
+            color:
+                heroware.system
+                    .constellation
+                    .color
+        },
+    
+        ...sortedEquipment.map(
+            entry => ({
+                text:
+                    entry.name,
+    
+                color:
+                    entry.rarity ===
+                    "legendary"
+                        ? "#ffc000"
+                        : "#cccccc"
+            })
+        )
+    ];
+
+    const startY =
+        position.y -
+        (
+            lines.length -
+            1
+        ) *
+        lineHeight /
+        2;
+
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
+        drawLabel(
+            lines[i].text,
+
+            position.x,
+
+            startY +
+                i * lineHeight,
+
+            12,
+
+            1,
+
+            lines[i].color,
+
+            true
+        );
+    }
+}
+
+
+function getEquipmentByHeroware() {
+    const groups =
+        new Map();
+
+    for (
+        const equipment
+        of state.equipment
+    ) {
+        if (
+            !equipmentMatchesFilters(
+                equipment
+            )
+        ) {
+            continue;
+        }
+
+        let entries =
+            groups.get(
+                equipment.heroware
+            );
+
+        if (!entries) {
+            entries = [];
+
+            groups.set(
+                equipment.heroware,
+                entries
+            );
+        }
+
+        entries.push(
+            equipment
+        );
+    }
+
+    return groups;
+}
+
+
+function drawEquipmentMode() {
+    ctx.save();
+
+    ctx.globalAlpha =
+        0.18;
+
+    drawConnections();
+
+    for (
+        const system
+        of state.systems
+    ) {
+        drawSystemMarker(
+            system
+        );
+    }
+
+    ctx.restore();
+
+    if (
+        state.camera.zoom >=
+        CONFIG.SYSTEM_DETAIL_ZOOM
+    ) {
+        return;
+    }
+
+    const equipmentByHeroware =
+        getEquipmentByHeroware();
+
+    for (
+        const [
+            heroware,
+            equipment
+        ]
+        of equipmentByHeroware
+    ) {
+        drawEquipmentHeroware(
+            heroware,
+            equipment
+        );
+    }
 }
 
 
@@ -4203,7 +5099,8 @@ function drawMoon(moon) {
 
     ctx.save();
 
-    ctx.globalAlpha = alpha;
+    ctx.globalAlpha =
+        alpha;
 
     drawObjectCircle(
         moon,
@@ -4219,6 +5116,29 @@ function drawMoon(moon) {
     }
 
     if (
+        isEquipmentMode() &&
+        moon.row.Type === "Heroware"
+    ) {
+        const equipmentByHeroware =
+            getEquipmentByHeroware();
+
+        const equipment =
+            equipmentByHeroware.get(
+                moon
+            );
+
+        if (
+            equipment &&
+            equipment.length > 0
+        ) {
+            drawEquipmentHeroware(
+                moon,
+                equipment
+            );
+        }
+    }
+
+    if (
         state.camera.zoom >=
         CONFIG.OBJECT_LABEL_ZOOM
     ) {
@@ -4227,22 +5147,32 @@ function drawMoon(moon) {
             radius -
             3;
 
-        ctx.save();
+        const showNormalLabel =
+            !isEquipmentMode() &&
+            objectMatchesSearch(moon);
 
-        ctx.globalAlpha = alpha;
+        if (showNormalLabel) {
+            ctx.save();
 
-        drawLabel(
-            moon.name,
-            screenPosition.x,
-            labelY,
-            12,
-            alpha,
-            moon.system.constellation.color
-        );
+            ctx.globalAlpha =
+                alpha;
 
-        ctx.restore();
+            drawLabel(
+                moon.name,
+                screenPosition.x,
+                labelY,
+                12,
+                alpha,
+                moon.system.constellation.color
+            );
 
-        if (isSearchActive()) {
+            ctx.restore();
+        }
+
+        if (
+            isSearchActive() &&
+            !isEquipmentMode()
+        ) {
             drawSearchIndicator(
                 count,
                 screenPosition.x,
@@ -4733,6 +5663,14 @@ function updateSearchResultsList() {
     searchResultsEmpty.classList.add(
         "hidden"
     );
+    
+    if (
+        state.searchListContent ===
+        "equipment"
+    ) {
+        updateEquipmentResultsList();
+        return;
+    }
 
     if (
         state.searchListContent ===
@@ -4927,6 +5865,9 @@ function getSortLabel() {
 
         case "environment":
             return "Environment";
+
+        case "rarity":
+            return "Rarity";
 
         default:
             return "Default";
@@ -5214,6 +6155,326 @@ function updateMissionResultsList() {
 }
 
 
+const EQUIPMENT_CATEGORIES = {
+    Thrusters: {
+        icon: "💨",
+        color: "#6ccdf8"
+    },
+
+    "Heat Sinks": {
+        icon: "🌡️",
+        color: "#d87c6c"
+    },
+
+    Reactors: {
+        icon: "⚛️",
+        color: "#d86cb0"
+    },
+
+    Ships: {
+        icon: "🚀",
+        color: "#a3d86c"
+    }
+};
+
+
+function getEquipmentCategory(name) {
+    if (
+        name.includes("Thruster")
+    ) {
+        return "Thrusters";
+    }
+
+    if (
+        name.includes("Heat Sink")
+    ) {
+        return "Heat Sinks";
+    }
+
+    if (
+        name.includes("Reactor")
+    ) {
+        return "Reactors";
+    }
+
+    return "Ships";
+}
+
+
+function sortEquipmentResults(results) {
+    if (
+        state.searchSortMode ===
+        "name"
+    ) {
+        return results.sort(
+            (a, b) =>
+                a.name.localeCompare(
+                    b.name
+                )
+        );
+    }
+
+    if (
+        state.searchSortMode ===
+        "rarity"
+    ) {
+        return results.sort(
+            (a, b) =>
+                (
+                    a.rarity === "legendary"
+                        ? 0
+                        : 1
+                ) -
+                (
+                    b.rarity === "legendary"
+                        ? 0
+                        : 1
+                ) ||
+                a.name.localeCompare(
+                    b.name
+                )
+        );
+    }
+
+    if (
+        state.searchSortMode ===
+        "proximity"
+    ) {
+        const camera =
+            getCameraWorldPosition();
+
+        return results.sort(
+            (a, b) => {
+                const aPosition =
+                    getObjectWorldPosition(
+                        a.heroware
+                    );
+
+                const bPosition =
+                    getObjectWorldPosition(
+                        b.heroware
+                    );
+
+                const aDistance =
+                    Math.hypot(
+                        aPosition.x -
+                            camera.x,
+                        aPosition.y -
+                            camera.y
+                    );
+
+                const bDistance =
+                    Math.hypot(
+                        bPosition.x -
+                            camera.x,
+                        bPosition.y -
+                            camera.y
+                    );
+
+                return (
+                    aDistance -
+                    bDistance
+                );
+            }
+        );
+    }
+
+    return results;
+}
+
+
+function updateEquipmentResultsList() {
+    if (!state.searchListMode) {
+        return;
+    }
+
+    searchResultsList.innerHTML = "";
+
+    const source =
+        state.focusedEquipmentListMode &&
+        state.camera.focusObject
+            ? state.equipment.filter(
+                equipment =>
+                    equipment.heroware ===
+                    state.camera.focusObject
+            )
+            : state.equipment;
+
+    const results =
+        sortEquipmentResults(
+            source
+                .filter(
+                    equipment =>
+                        equipmentMatchesFilters(
+                            equipment
+                        )
+                )
+                .slice()
+        );
+
+    if (results.length === 0) {
+        searchResultsEmpty.classList.remove(
+            "hidden"
+        );
+        
+        searchResultsEmpty.textContent = 
+            "No results were found for the current filters, or this Heroware contains no notable equipment.";
+
+        return;
+    }
+
+    searchResultsEmpty.classList.add(
+        "hidden"
+    );
+
+    for (const equipment of results) {
+        const category =
+            EQUIPMENT_CATEGORIES[
+                equipment.category
+            ];
+
+        const entry =
+            document.createElement(
+                "button"
+            );
+
+        entry.className =
+            "search-result-entry";
+
+        entry.style.color =
+            category.color;
+
+        entry.style.borderColor =
+            category.color;
+
+        entry.style.background =
+            darkenColor(
+                category.color,
+                0.8
+            );
+
+        const rarity =
+            document.createElement("span");
+        
+        rarity.className =
+            "equipment-rarity";
+        
+        const diamonds =
+            document.createElement("span");
+        
+        diamonds.className =
+            "equipment-rarity-diamonds";
+        
+        for (let i = 0; i < 3; i++) {
+            const diamond =
+                document.createElement("span");
+        
+            diamond.className =
+                "equipment-rarity-diamond";
+        
+            if (
+                equipment.rarity === "legendary" ||
+                i > 0
+            ) {
+                diamond.textContent = "💎";
+            }
+        
+            diamonds.appendChild(diamond);
+        }
+        
+        rarity.appendChild(diamonds);
+
+        const icon =
+            document.createElement(
+                "span"
+            );
+
+        icon.className =
+            "equipment-result-icon";
+
+        icon.textContent =
+            category.icon;
+
+        icon.style.color =
+            category.color;
+
+        const iconGroup =
+            document.createElement(
+                "span"
+            );
+
+        iconGroup.className =
+            "equipment-icon-group";
+
+        iconGroup.appendChild(
+            rarity
+        );
+
+        iconGroup.appendChild(
+            icon
+        );
+
+        const name =
+            document.createElement(
+                "span"
+            );
+
+        name.className =
+            "equipment-search-result-name";
+
+        name.textContent =
+            equipment.fullName;
+
+        const coordinates =
+            document.createElement(
+                "span"
+            );
+        
+        coordinates.className =
+            "search-result-coordinates";
+        
+        coordinates.textContent =
+            equipment.coordinates;
+
+        entry.appendChild(
+            iconGroup
+        );
+
+        entry.appendChild(
+            name
+        );
+
+        entry.appendChild(
+            coordinates
+        );
+
+        entry.addEventListener(
+            "click",
+            () => {
+                if (
+                    !equipment.heroware
+                ) {
+                    return;
+                }
+        
+                focusObject(
+                    equipment.heroware,
+                    false
+                );
+        
+                showEquipmentInfo(
+                    equipment
+                );
+            }
+        );
+
+        searchResultsList.appendChild(
+            entry
+        );
+    }
+}
+
+
 function getMissionColor(mission) {
     switch (mission.Type) {
         case "Chicken Invasion":
@@ -5256,11 +6517,15 @@ function getMissionColor(mission) {
 
 
 function exitFocusedMissionMode() {
-    if (state.focusedMissionListMode == false) {
+    if (
+        !state.focusedMissionListMode &&
+        !state.focusedEquipmentListMode
+    ) {
         return;
     }
         
     state.focusedMissionListMode = false;
+    state.focusedEquipmentListMode = false;
 
     searchResultsPanel.classList.add(
         "hidden"
@@ -5321,6 +6586,22 @@ function canShowFocusedMissions(object) {
 }
 
 
+function canShowFocusedEquipment(object) {
+    if (!object) {
+        return false;
+    }
+
+    if (
+        object.row.Type !==
+        "Heroware"
+    ) {
+        return false;
+    }
+
+    return true;
+}
+
+
 function focusObject(
     object,
     showInfo = true
@@ -5353,14 +6634,40 @@ function focusObject(
         "hidden"
     );
 
+    const canShowMissions =
+    canShowFocusedMissions(
+        object
+    );
+
+    const canShowEquipment =
+        canShowFocusedEquipment(
+            object
+        );
+    
     if (
-        canShowFocusedMissions(object) &&
-        !state.focusedMissionListMode
+        object.row.Type ===
+        "Heroware"
+    ) {
+        focusedMissionButtonText.textContent =
+            "Enter Dealership";
+    }
+    else {
+        focusedMissionButtonText.textContent =
+            "Missions";
+    }
+
+    if (
+        (
+            canShowMissions ||
+            canShowEquipment
+        ) &&
+        !state.focusedMissionListMode &&
+        !state.focusedEquipmentListMode
     ) {
         focusedMissionControls.classList.remove(
             "hidden"
         );
-    
+
         zoomControls.classList.add(
             "hidden"
         );
@@ -5369,8 +6676,11 @@ function focusObject(
         focusedMissionControls.classList.add(
             "hidden"
         );
-    
-        if (!state.focusedMissionListMode) {
+
+        if (
+            !state.focusedMissionListMode &&
+            !state.focusedEquipmentListMode
+        ) {
             zoomControls.classList.remove(
                 "hidden"
             );
@@ -5960,15 +7270,20 @@ function render() {
     coordinatesElement.textContent =
         `${coordX}+${coordY}`;
 
-    drawConnections();
-
-    for (const system of state.systems) {
-        drawSystemMarker(system);
+    if (isEquipmentMode()) {
+        drawEquipmentMode();
     }
+    else {
+        drawConnections();
 
-    for (const constellation of state.constellations) {
-        drawConstellationLabel(constellation);
-    }
+        for (const system of state.systems) {
+            drawSystemMarker(system);
+        }
+
+        for (const constellation of state.constellations) {
+            drawConstellationLabel(constellation);
+        }
+    };
 
     drawClark();
 }
@@ -6428,6 +7743,149 @@ function showMissionInfo(mission) {
             <div class="mission-info-property">
                 <span class="property-name">Notes</span>
                 <span>${escapeHtml(mission.Notes)}</span>
+            </div>
+        `;
+    }
+
+    infoContent.innerHTML =
+        html;
+
+    infoPanel.classList.remove(
+        "hidden"
+    );
+
+    render();
+}
+
+
+function showEquipmentInfo(
+    equipment
+) {
+    const info =
+        equipment.info;
+
+    if (!info) {
+        return;
+    }
+
+    state.selectedObject =
+        equipment.heroware;
+
+    infoTitle.textContent =
+        info.name;
+
+    let html = "";
+
+    html += `
+        <div class="property ">
+            <span>
+                ${
+                    info.rarity === "legendary"
+                        ? "Legendary"
+                        : "Rare"
+                }
+            </span>
+        </div>
+
+        <div class="property mission-info-property">
+            <span class="property-name">
+                Price Range
+            </span>
+            <span>
+                ${info.price.low.toLocaleString()}
+                -
+                ${info.price.high.toLocaleString()}
+            </span>
+        </div>
+    `;
+
+    if (
+        info.category ===
+        "Thrusters"
+    ) {
+        html += `
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Power
+                </span>
+                <span>
+                    ${info.properties.power}
+                </span>
+            </div>
+
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Efficiency
+                </span>
+                <span>
+                    ${info.properties.efficiency}
+                </span>
+            </div>
+
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Speed
+                </span>
+                <span>
+                    ${info.properties.speed}
+                </span>
+            </div>
+        `;
+    }
+
+    else if (
+        info.category ===
+        "Heat Sinks"
+    ) {
+        html += `
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Power
+                </span>
+                <span>
+                    ${info.properties.power}
+                </span>
+            </div>
+
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Efficiency
+                </span>
+                <span>
+                    ${info.properties.efficiency}
+                </span>
+            </div>
+        `;
+    }
+
+    else if (
+        info.category ===
+        "Reactors"
+    ) {
+        html += `
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Power
+                </span>
+                <span>
+                    ${info.properties.power}
+                </span>
+            </div>
+        `;
+    }
+
+    else if (
+        info.category ===
+        "Ships"
+    ) {
+        html += `
+            <div class="property mission-info-property">
+                <span class="property-name">
+                    Speed
+                </span>
+                <span>
+                    ${info.properties.speed}
+                </span>
             </div>
         `;
     }
@@ -7313,25 +8771,117 @@ document
         }
     );
 
+    document
+    .querySelectorAll(
+        ".equipment-rarity-filter"
+    )
+    .forEach(
+        checkbox => {
+            checkbox.addEventListener(
+                "change",
+                () => {
+                    if (checkbox.checked) {
+                        state.equipmentFilters.rarities.add(
+                            checkbox.value
+                        );
+                    }
+                    else {
+                        state.equipmentFilters.rarities.delete(
+                            checkbox.value
+                        );
+                    }
+
+                    updateSearchResultsList();
+                    updateStatus();
+                    render();
+                }
+            );
+        }
+    );
+
+document
+    .querySelectorAll(
+        ".equipment-type-filter"
+    )
+    .forEach(
+        checkbox => {
+            checkbox.addEventListener(
+                "change",
+                () => {
+                    if (checkbox.checked) {
+                        state.equipmentFilters.types.add(
+                            checkbox.value
+                        );
+                    }
+                    else {
+                        state.equipmentFilters.types.delete(
+                            checkbox.value
+                        );
+                    }
+
+                    updateSearchResultsList();
+                    updateStatus();
+                    render();
+                }
+            );
+        }
+    );
+
 focusedMissionButton.addEventListener(
     "click",
     () => {
         const object =
             state.camera.focusObject;
-    
+
+        if (!object) {
+            return;
+        }
+
+        if (
+            object.row.Type === "Heroware"
+        ) {
+            if (!canShowFocusedEquipment(object)) {
+                return;
+            }
+
+            state.focusedMissionListMode = false;
+            state.focusedEquipmentListMode = true;
+            state.searchListMode = true;
+
+            state.searchListContent = "equipment";
+            state.searchSortMode = "internal";
+            sortSearchLabel.textContent = "Default";
+
+            focusedMissionControls.classList.add("hidden");
+            zoomControls.classList.add("hidden");
+            optionsPanel.classList.add("hidden");
+            searchResultsPanel.classList.remove("hidden");
+            backButton.classList.remove("hidden");
+            searchListButton.classList.add("hidden");
+            sortSearchButton.classList.remove("hidden");
+            searchListControls.classList.remove("hidden");
+            menuButton.classList.add("hidden");
+
+            searchResultsList.scrollTop =
+                0;
+
+            updateSearchResultsList();
+
+            return;
+        }
+
         if (!canShowFocusedMissions(object)) {
             return;
         }
-    
+
+        state.focusedEquipmentListMode = false;
         state.focusedMissionListMode = true;
         state.searchListMode = true;
+
         state.searchListContent = "missions";
-    
         state.searchSortMode = "internal";
-    
-        sortSearchLabel.textContent =
-            "Default";
-    
+        sortSearchLabel.textContent = "Default";
+        
         focusedMissionControls.classList.add("hidden");
         zoomControls.classList.add("hidden");
         optionsPanel.classList.add("hidden");
@@ -7341,12 +8891,13 @@ focusedMissionButton.addEventListener(
         sortSearchButton.classList.remove("hidden");
         searchListControls.classList.remove("hidden");
         menuButton.classList.add("hidden");
-    
+
         searchResultsList.scrollTop = 0;
-    
+
         updateSearchResultsList();
     }
 );
+
 
 showWormholesCheckbox.addEventListener(
     "change",
@@ -7414,6 +8965,14 @@ window.addEventListener(
                     state.canvasHeight / 2,
                     1 / CONFIG.ZOOM_FACTOR
                 );
+                break;
+
+            case "Enter":
+                if (state.selectedObject) {
+                    focusObject(
+                        state.selectedObject
+                    );
+                }
                 break;
 
             case "Escape":
@@ -7649,6 +9208,7 @@ welcomeScreen.addEventListener(
     closeWelcomeScreen
 );
 
+updateSearchFilterVisibility();
 resizeCanvas();
 
 showWormholesCheckbox.checked =

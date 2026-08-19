@@ -6,6 +6,12 @@
 
     <title>CIU Galaxy Finder</title>
 
+    <link
+        rel="icon"
+        href="data/favicon.ico"
+    >
+    <script data-goatcounter="https://ciugalaxyfinder.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,7 +23,10 @@
                 Made with assistance from @PlasmaX and @Yami no Zero
             </p>
             <p>
-                Recreation of Chicken Invaders Universe's galaxy map that contains all 22,439 missions and 6,414 objects.
+                Recreation of Chicken Invaders Universe's galaxy map that contains all 22,439 missions and 6,364 objects.
+            </p>
+            <p>
+                It's also integrated wtih the Legendary tracking chart, containing all Legendary and Rare equipment locations.
             </p>
             <p>
                 Controls:
@@ -32,7 +41,7 @@
                 Click/Tap to select object
             </p>
             <p>
-                Double Click/Tap to focus on selected object
+                Double Click/Tap/Enter to focus on selected object
             </p>
             <p>
                 Esc to close Infobox/Mission List
@@ -178,6 +187,13 @@
                                 >
                                     Missions
                                 </button>
+
+                                <button
+                                    id="equipmentSearchModeButton"
+                                    class="search-mode-button"
+                                >
+                                    Equipment
+                                </button>
                             </div>
                         </div>
 
@@ -189,445 +205,515 @@
                                 Reset Filters
                             </button>
                         </div>
-            
-                        <div class="options-group">
-                            <div class="options-group-title">
-                                Name Search
+
+                        <div id="standardSearchFilters">
+                
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Name Search
+                                </div>
+                
+                                
+                                <input
+                                    id="planet-search-input"
+                                    type="text"
+                                    placeholder="Search planet name..."
+                                    autocomplete="off"
+                                >
+
+                                <input
+                                    id="mission-search-input"
+                                    type="text"
+                                    placeholder="Search mission name..."
+                                    autocomplete="off"
+                                >
                             </div>
-            
+                
+                
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Environments
+                                </div>
+                
+                                <button
+                                    class="environment-search-button"
+                                    data-environment="Massive"
+                                >
+                                    Massive
+                                </button>
+                
+                                <button
+                                    class="environment-search-button"
+                                    data-environment="Hot"
+                                >
+                                    Hot
+                                </button>
+                
+                                <button
+                                    class="environment-search-button"
+                                    data-environment="Electric"
+                                >
+                                    Electric
+                                </button>
+                
+                                <button
+                                    class="environment-search-button"
+                                    data-environment="Frozen"
+                                >
+                                    Frozen
+                                </button>
+                            </div>
+                
+                
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Planet Types
+                                </div>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Sun"
+                                    >
+                                    Sun
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Binary Sun"
+                                    >
+                                    Binary Sun
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Wormhole"
+                                    >
+                                    Wormhole
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Gas giant"
+                                    >
+                                    Gas giant
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Inferno"
+                                    >
+                                    Inferno
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Terran planet"
+                                    >
+                                    Terran planet
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Frozen wasteland"
+                                    >
+                                    Frozen wasteland
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Alien world"
+                                    >
+                                    Alien world
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Barren rock"
+                                    >
+                                    Barren rock
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Artificial moon"
+                                    >
+                                    Artificial moon
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Asteroid belt"
+                                    >
+                                    Asteroid belt
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Heroes Academy"
+                                    >
+                                    Heroes Academy
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Heroware"
+                                    >
+                                    Heroware
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Aftermarket Station"
+                                    >
+                                    Aftermarket Station
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Fortune Teller"
+                                    >
+                                    Fortune Teller
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Gus's Gas"
+                                    >
+                                    Gus's Gas
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Space Burger"
+                                    >
+                                    Space Burger
+                                </label>
+                
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="searchType"
+                                        value="Droid"
+                                    >
+                                    Droid
+                                </label>
+                            </div>
+
+                            <div
+                                id="missionDurationGroup"
+                                class="options-group"
+                            >
+                                <div class="options-group-title">
+                                    Duration
+                                </div>
+
+                                <div class="range-values">
+                                    <span id="mission-waves-min-value">3</span>
+                                    <span id="mission-waves-max-value">50</span>
+                                </div>
+
+                                <div class="dual-range">
+                                    <input
+                                        id="mission-waves-min-slider"
+                                        type="range"
+                                        min="3"
+                                        max="50"
+                                        value="3"
+                                    >
+
+                                    <input
+                                        id="mission-waves-max-slider"
+                                        type="range"
+                                        min="3"
+                                        max="50"
+                                        value="50"
+                                    >
+                                </div>
+                            </div>
+
+                            <div
+                                id="missionDifficultyGroup"
+                                class="options-group"
+                            >
+                                <div class="options-group-title">
+                                    Difficulty
+                                </div>
+
+                                <div class="difficulty-range-group">
+                                    <div class="range-label">
+                                        Low %
+                                    </div>
+
+                                    <div class="range-values">
+                                        <span id="mission-diff-low-min-value">0%</span>
+                                        <span id="mission-diff-low-max-value">100%</span>
+                                    </div>
+
+                                    <div class="dual-range">
+                                        <input
+                                            id="mission-diff-low-min-slider"
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value="0"
+                                        >
+
+                                        <input
+                                            id="mission-diff-low-max-slider"
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value="100"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="difficulty-range-group">
+                                    <div class="range-label">
+                                        High %
+                                    </div>
+
+                                    <div class="range-values">
+                                        <span id="mission-diff-high-min-value">0%</span>
+                                        <span id="mission-diff-high-max-value">100%</span>
+                                    </div>
+
+                                    <div class="dual-range">
+                                        <input
+                                            id="mission-diff-high-min-slider"
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value="0"
+                                        >
+
+                                        <input
+                                            id="mission-diff-high-max-slider"
+                                            type="range"
+                                            min="0"
+                                            max="100"
+                                            value="100"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Mission Types
+                                </div>
                             
-                            <input
-                                id="planet-search-input"
-                                type="text"
-                                placeholder="Search planet name..."
-                                autocomplete="off"
-                            >
-
-                            <input
-                                id="mission-search-input"
-                                type="text"
-                                placeholder="Search mission name..."
-                                autocomplete="off"
-                            >
-                        </div>
-            
-            
-                        <div class="options-group">
-                            <div class="options-group-title">
-                                Environments
-                            </div>
-            
-                            <button
-                                class="environment-search-button"
-                                data-environment="Massive"
-                            >
-                                Massive
-                            </button>
-            
-                            <button
-                                class="environment-search-button"
-                                data-environment="Hot"
-                            >
-                                Hot
-                            </button>
-            
-                            <button
-                                class="environment-search-button"
-                                data-environment="Electric"
-                            >
-                                Electric
-                            </button>
-            
-                            <button
-                                class="environment-search-button"
-                                data-environment="Frozen"
-                            >
-                                Frozen
-                            </button>
-                        </div>
-            
-            
-                        <div class="options-group">
-                            <div class="options-group-title">
-                                Planet Types
-                            </div>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Sun"
-                                >
-                                Sun
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Binary Sun"
-                                >
-                                Binary Sun
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Wormhole"
-                                >
-                                Wormhole
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Gas giant"
-                                >
-                                Gas giant
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Inferno"
-                                >
-                                Inferno
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Terran planet"
-                                >
-                                Terran planet
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Frozen wasteland"
-                                >
-                                Frozen wasteland
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Alien world"
-                                >
-                                Alien world
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Barren rock"
-                                >
-                                Barren rock
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Artificial moon"
-                                >
-                                Artificial moon
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Asteroid belt"
-                                >
-                                Asteroid belt
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Heroes Academy"
-                                >
-                                Heroes Academy
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Heroware"
-                                >
-                                Heroware
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Aftermarket Station"
-                                >
-                                Aftermarket Station
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Fortune Teller"
-                                >
-                                Fortune Teller
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Gus's Gas"
-                                >
-                                Gus's Gas
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Space Burger"
-                                >
-                                Space Burger
-                            </label>
-            
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="searchType"
-                                    value="Droid"
-                                >
-                                Droid
-                            </label>
-                        </div>
-
-                        <div
-                            id="missionDurationGroup"
-                            class="options-group"
-                        >
-                            <div class="options-group-title">
-                                Duration
-                            </div>
-
-                            <div class="range-values">
-                                <span id="mission-waves-min-value">3</span>
-                                <span id="mission-waves-max-value">50</span>
-                            </div>
-
-                            <div class="dual-range">
-                                <input
-                                    id="mission-waves-min-slider"
-                                    type="range"
-                                    min="3"
-                                    max="50"
-                                    value="3"
-                                >
-
-                                <input
-                                    id="mission-waves-max-slider"
-                                    type="range"
-                                    min="3"
-                                    max="50"
-                                    value="50"
-                                >
-                            </div>
-                        </div>
-
-                        <div
-                            id="missionDifficultyGroup"
-                            class="options-group"
-                        >
-                            <div class="options-group-title">
-                                Difficulty
-                            </div>
-
-                            <div class="difficulty-range-group">
-                                <div class="range-label">
-                                    Low %
-                                </div>
-
-                                <div class="range-values">
-                                    <span id="mission-diff-low-min-value">0%</span>
-                                    <span id="mission-diff-low-max-value">100%</span>
-                                </div>
-
-                                <div class="dual-range">
+                                <label>
                                     <input
-                                        id="mission-diff-low-min-slider"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value="0"
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Chicken Invasion"
                                     >
-
+                                    Chicken Invasion
+                                </label>
+                            
+                                <label>
                                     <input
-                                        id="mission-diff-low-max-slider"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value="100"
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Supernova"
                                     >
-                                </div>
-                            </div>
-
-                            <div class="difficulty-range-group">
-                                <div class="range-label">
-                                    High %
-                                </div>
-
-                                <div class="range-values">
-                                    <span id="mission-diff-high-min-value">0%</span>
-                                    <span id="mission-diff-high-max-value">100%</span>
-                                </div>
-
-                                <div class="dual-range">
+                                    Supernova
+                                </label>
+                            
+                                <label>
                                     <input
-                                        id="mission-diff-high-min-slider"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value="0"
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Squawk Block"
                                     >
-
+                                    Squawk Block
+                                </label>
+                            
+                                <label>
                                     <input
-                                        id="mission-diff-high-max-slider"
-                                        type="range"
-                                        min="0"
-                                        max="100"
-                                        value="100"
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Comet Chase"
                                     >
-                                </div>
+                                    Comet Chase
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Boss Rush"
+                                    >
+                                    Boss Rush
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Darkness"
+                                    >
+                                    Darkness
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Feather Fields"
+                                    >
+                                    Feather Fields
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Double Team"
+                                    >
+                                    Double Team
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Meteor Storm"
+                                    >
+                                    Meteor Storm
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Retro"
+                                    >
+                                    Retro
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Key Rush"
+                                    >
+                                    Key Rush
+                                </label>
+                            
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="missionType"
+                                        value="Droid Raid"
+                                    >
+                                    Droid Raid
+                                </label>
                             </div>
                         </div>
+                        <div id="equipmentSearchFilters" class="hidden">
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Rarity
+                                </div>
 
-                        <div class="options-group">
-                            <div class="options-group-title">
-                                Mission Types
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-rarity-filter"
+                                        value="rare"
+                                    >
+                                    Rare
+                                </label>
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-rarity-filter"
+                                        value="legendary"
+                                    >
+                                    Legendary
+                                </label>
+                            </div>
+
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Type
+                                </div>
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-type-filter"
+                                        value="Thrusters"
+                                    >
+                                    Thrusters
+                                </label>
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-type-filter"
+                                        value="Heat Sinks"
+                                    >
+                                    Heat Sinks
+                                </label>
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-type-filter"
+                                        value="Reactors"
+                                    >
+                                    Reactors
+                                </label>
+
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        class="equipment-type-filter"
+                                        value="Ships"
+                                    >
+                                    Ships
+                                </label>
                             </div>
                         
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Chicken Invasion"
-                                >
-                                Chicken Invasion
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Supernova"
-                                >
-                                Supernova
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Squawk Block"
-                                >
-                                Squawk Block
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Comet Chase"
-                                >
-                                Comet Chase
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Boss Rush"
-                                >
-                                Boss Rush
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Darkness"
-                                >
-                                Darkness
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Feather Fields"
-                                >
-                                Feather Fields
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Double Team"
-                                >
-                                Double Team
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Meteor Storm"
-                                >
-                                Meteor Storm
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Retro"
-                                >
-                                Retro
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Key Rush"
-                                >
-                                Key Rush
-                            </label>
-                        
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    class="missionType"
-                                    value="Droid Raid"
-                                >
-                                Droid Raid
-                            </label>
                         </div>
-                        
             
                     </div>
                 </div>
@@ -659,7 +745,7 @@
                     title="Show missions"
                 >
                     <span class="focused-mission-icon">🚀</span>
-                    <span>Missions</span>
+                    <span id="focusedMissionButtonText">Missions</span>
                 </button>
             </div>
 
