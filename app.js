@@ -891,6 +891,22 @@ function resetFilters() {
     missionDiffHighMinValue.textContent = "0%";
     missionDiffHighMaxValue.textContent = "100%";
 
+    state.equipmentFilters.rarities.clear();
+    state.equipmentFilters.types.clear();
+
+    document
+        .querySelectorAll(".equipment-rarity-filter")
+        .forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+    document
+        .querySelectorAll(".equipment-type-filter")
+        .forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+    updateEquipmentResultsList();
     updateMissionSearchResults();
     updateSearchMatches();
     updateStatus();
@@ -5684,6 +5700,9 @@ function updateSearchResultsList() {
             searchResultsEmpty.classList.remove(
                 "hidden"
             );
+            
+            searchResultsEmpty.textContent = 
+                "No results were found for the current filters.";
         }
 
         return;
@@ -5700,6 +5719,9 @@ function updateSearchResultsList() {
         searchResultsEmpty.classList.remove(
             "hidden"
         );
+        
+        searchResultsEmpty.textContent = 
+            "No results were found for the current filters.";
         return;
     }
 
@@ -6317,8 +6339,10 @@ function updateEquipmentResultsList() {
             "hidden"
         );
         
-        searchResultsEmpty.textContent = 
-            "No results were found for the current filters, or this Heroware contains no notable equipment.";
+        searchResultsEmpty.textContent =
+            state.focusedEquipmentListMode
+                ? "No results were found for the current filters, or this Heroware contains no notable equipment."
+                :   "No equipment data is currently available.";
 
         return;
     }
