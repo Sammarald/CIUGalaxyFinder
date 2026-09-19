@@ -289,7 +289,6 @@ function setControlsEnabled(enabled) {
             ".missionType, " +
             "#planet-search-input, " +
             "#mission-search-input, " +
-            "#missionCompletedFilterButton, " +
             ".dual-range input" 
         )
         .forEach(
@@ -797,7 +796,6 @@ const state = {
     searchQuery: "",
     searchListMode: false,
     searchListView: "planets",
-    searchListContent: "planets",
     searchListContent: "planets",
     seenFilter: SEEN_FILTER_ALL,
     searchSortMode: "internal",
@@ -9185,14 +9183,6 @@ canvas.addEventListener(
                 "dragging"
             );
         }
-    }
-);
-
-
-canvas.addEventListener(
-    "pointerleave",
-    () => {
-        // Pointer capture keeps the gesture alive
     }
 );
 
