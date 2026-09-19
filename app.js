@@ -3506,21 +3506,21 @@ function updateSeenFilterButton() {
     switch (state.seenFilter) {
         case SEEN_FILTER_UNSEEN:
             seenFilterButton.textContent =
-                "Other";
+                "Unseen Only";
             seenFilterButton.dataset.state =
                 "subtractive";
             break;
 
         case SEEN_FILTER_SEEN:
             seenFilterButton.textContent =
-                "Seen";
+                "Seen Only";
             seenFilterButton.dataset.state =
                 "additive";
             break;
 
         default:
             seenFilterButton.textContent =
-                "Seen + Other";
+                "Seen + Unseen";
             seenFilterButton.dataset.state =
                 "default";
             break;
@@ -3552,7 +3552,7 @@ function updateMissionCompletedFilterButton() {
     ) {
         case COMPLETED_FILTER_OTHER:
             missionCompletedFilterButton.textContent =
-                "Other";
+                "Incomplete";
 
             missionCompletedFilterButton.dataset.state =
                 "subtractive";
@@ -3568,7 +3568,7 @@ function updateMissionCompletedFilterButton() {
 
         default:
             missionCompletedFilterButton.textContent =
-                "Completed + Other";
+                "Completed + Incomplete";
 
             missionCompletedFilterButton.dataset.state =
                 "default";
@@ -5879,7 +5879,10 @@ function drawMoon(moon) {
 
         const showNormalLabel =
             !isEquipmentMode() &&
-            objectMatchesSearch(moon);
+            (
+                !isSearchActive() ||
+                objectMatchesSearch(moon)
+            );
 
         if (showNormalLabel) {
             ctx.save();
@@ -7373,6 +7376,51 @@ function canShowFocusedEquipment(object) {
     }
 
     return true;
+}
+
+
+function updateFocusedMissionButton(object) {
+    if (!object) {
+        focusedMissionControls.classList.add(
+            "hidden"
+        );
+        zoomControls.classList.remove(
+            "hidden"
+        );
+        return;
+    }
+
+    const canShowMissions =
+        canShowFocusedMissions(object);
+
+    const canShowEquipment =
+        canShowFocusedEquipment(object);
+
+    if (
+        !canShowMissions &&
+        !canShowEquipment
+    ) {
+        focusedMissionControls.classList.add(
+            "hidden"
+        );
+        zoomControls.classList.remove(
+            "hidden"
+        );
+        return;
+    }
+
+    focusedMissionButtonText.textContent =
+        object.row.Type === "Heroware"
+            ? "Enter Dealership"
+            : "Missions";
+
+    focusedMissionControls.classList.remove(
+        "hidden"
+    );
+
+    zoomControls.classList.remove(
+        "hidden"
+    );
 }
 
 
@@ -9408,22 +9456,34 @@ canvas.addEventListener(
             getHitObjects();
 
         if (hits.length > 0) {
-            showObjectInfo(hits[0]);
+            const object =
+                hits[0];
+
+            state.camera.focusObject = null;
+
+            exitFocusedMissionMode();
+
+            showObjectInfo(object);
+
+            updateFocusedMissionButton(
+                object
+            );
         }
         else {
-            closeInfo();
-        }
+            state.camera.focusObject = null;
 
-        state.camera.focusObject = null;
-        
-        exitFocusedMissionMode();
-        focusedMissionControls.classList.add(
-            "hidden"
-        );
-        
-        zoomControls.classList.remove(
-            "hidden"
-        );
+            closeInfo();
+
+            exitFocusedMissionMode();
+
+            focusedMissionControls.classList.add(
+                "hidden"
+            );
+
+            zoomControls.classList.remove(
+                "hidden"
+            );
+        }
     }
 );
 
@@ -9661,7 +9721,7 @@ focusedMissionButton.addEventListener(
     "click",
     () => {
         const object =
-            state.camera.focusObject;
+            state.selectedObject;
 
         if (!object) {
             return;
@@ -9673,6 +9733,8 @@ focusedMissionButton.addEventListener(
             if (!canShowFocusedEquipment(object)) {
                 return;
             }
+
+            focusObject(object);
 
             state.focusedMissionListMode = false;
             state.focusedEquipmentListMode = true;
@@ -9703,6 +9765,8 @@ focusedMissionButton.addEventListener(
         if (!canShowFocusedMissions(object)) {
             return;
         }
+
+        focusObject(object);
 
         state.focusedEquipmentListMode = false;
         state.focusedMissionListMode = true;
@@ -10060,4 +10124,14 @@ loadData();
 
 requestAnimationFrame(
     animationFrame
+);
+
+const mapResizeObserver =
+    new ResizeObserver(() => {
+        resizeCanvas();
+        render();
+    });
+
+mapResizeObserver.observe(
+    mapContainer
 );
