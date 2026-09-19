@@ -362,7 +362,8 @@ label {
     cursor: pointer;
 }
 
-.search-result-environment {
+.search-result-environment,
+.search-result-seen {
     flex: 0 0 auto;
 
     display: flex;
@@ -377,6 +378,11 @@ label {
 
     position: relative;
     top: 6px;
+}
+
+.search-result-seen {
+    color: #4fff7f !important;
+    margin-left: -7px;
 }
 
 .search-result-entry:hover {
@@ -659,6 +665,10 @@ label {
     background: #3f0f0f;
 }
 
+#missionCompletedButton {
+    text-align: center;
+}
+
 .search-list-button {
     width: 120px;
     height: 120px;
@@ -720,7 +730,8 @@ label {
     font-weight: 700;
 }
 
-.mission-result-environment {
+.mission-result-environment,
+.mission-result-completed {
     flex: 0 0 auto;
     margin-right: -6px;
 
@@ -736,6 +747,10 @@ label {
 
     position: relative;
     top: 6px;
+}
+
+.mission-result-completed {
+    color: #4fff7f !important;
 }
 
 #zoomControls {
@@ -943,6 +958,16 @@ label {
     font-weight: 600;
 }
 
+#objectSeenButton {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#missionCompletedButton {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 .equipment-icon-group {
     display: flex;
     align-items: center;
@@ -1018,6 +1043,30 @@ label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+#resetSeenObjectsButton:disabled,
+#resetSeenObjectsButton:disabled:hover {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+#resetSeenObjectsButton.holding {
+    border-color: #ff3f3f;
+    background: #3f0f0f;
+}
+
+#resetCompletedMissionsButton:disabled,
+#resetCompletedMissionsButton:disabled:hover {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+#resetCompletedMissionsButton.holding {
+    border-color: #ff3f3f;
+    background: #3f0f0f;
 }
 
 #clarkG {
@@ -1229,10 +1278,15 @@ label {
         font-size: 6px;
     }
 
-    .search-result-environment {
+    .search-result-environment,
+    .search-result-seen {
         flex: 0 0 auto;
         max-width: 24px;
         font-size: 6px;
+    }
+    
+    .search-result-seen {
+        margin-left: -3px;
     }
     
     .search-result-name {
@@ -1256,8 +1310,8 @@ label {
     }
 
     .mission-result-stats {
-        flex: 0 0 24px;
-        min-width: 24px;
+        flex: 0 0 14px;
+        min-width: 8px;
     }
 
     .mission-result-waves,
@@ -1265,16 +1319,17 @@ label {
         font-size: 6px;
     }
     
-    .mission-result-environment {
+    .mission-result-environment,
+    .mission-result-completed {
         flex: 0 0 auto;
-        max-width: 24px;
-        margin-right: -12px;
-
-        overflow: hidden;
-        white-space: nowrap;
-
+        max-width: 12px;
         font-size: 6px;
-        text-align: right;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .mission-result-completed {
+        color: #4fff7f !important;
     }
     
     .equipment-icon-group {

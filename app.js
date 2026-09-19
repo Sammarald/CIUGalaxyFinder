@@ -45,6 +45,20 @@ const ENVIRONMENTS = [
 
 const EQUIPMENT_SPREADSHEET_ID = "1SkezvomQiJ90fGVRzii7LGNtBW5VueIM"
 
+const COMPLETED_MISSIONS_STORAGE_KEY =
+    "ciuCompletedMissionIds";
+
+const COMPLETED_FILTER_ALL = 0;
+const COMPLETED_FILTER_OTHER = 1;
+const COMPLETED_FILTER_COMPLETED = 2;
+
+const SEEN_OBJECTS_STORAGE_KEY =
+    "ciuSeenObjectIds";
+
+const SEEN_FILTER_ALL = 0;
+const SEEN_FILTER_UNSEEN = 1;
+const SEEN_FILTER_SEEN = 2;
+
 const EQUIPMENT_LAYOUTS = {
     other: {
         legendaryColumn: "L",
@@ -275,7 +289,8 @@ function setControlsEnabled(enabled) {
             ".missionType, " +
             "#planet-search-input, " +
             "#mission-search-input, " +
-            ".dual-range input"
+            "#missionCompletedFilterButton, " +
+            ".dual-range input" 
         )
         .forEach(
             element => {
@@ -440,6 +455,18 @@ const equipmentSearchFilters =
 
 const focusedMissionButtonText =
     document.getElementById("focusedMissionButtonText");
+
+const resetCompletedMissionsButton =
+    document.getElementById("resetCompletedMissionsButton");
+
+const missionCompletedFilterButton =
+    document.getElementById("missionCompletedFilterButton");
+
+const seenFilterButton =
+    document.getElementById("seenFilterButton");
+
+const resetSeenObjectsButton =
+    document.getElementById("resetSeenObjectsButton");
     
 setControlsEnabled(false);
 
@@ -771,6 +798,8 @@ const state = {
     searchListMode: false,
     searchListView: "planets",
     searchListContent: "planets",
+    searchListContent: "planets",
+    seenFilter: SEEN_FILTER_ALL,
     searchSortMode: "internal",
     focusedMissionListMode: false,
     focusedEquipmentListMode: false,
@@ -790,8 +819,12 @@ const state = {
         minDifficultyLow: 0,
         maxDifficultyLow: 100,
         minDifficultyHigh: 0,
-        maxDifficultyHigh: 100
+        maxDifficultyHigh: 100,
+        completion: COMPLETED_FILTER_ALL
     },
+
+    completedMissionIds: new Set(),
+    seenObjectIds: new Set(),
 
     missionSearchResults: new Set(),
     missionSearchCount: 0,
@@ -905,6 +938,16 @@ function resetFilters() {
         .forEach(checkbox => {
             checkbox.checked = false;
         });
+
+    state.missionFilters.completion =
+        COMPLETED_FILTER_ALL;
+    
+    updateMissionCompletedFilterButton();
+
+    state.seenFilter =
+        SEEN_FILTER_ALL;
+
+    updateSeenFilterButton();
 
     updateEquipmentResultsList();
     updateMissionSearchResults();
@@ -1140,6 +1183,7 @@ function parseMissionsTSV(text) {
                 : "";
 
         const mission = {
+            id: missions.length,            
             Name: get(columnIndex.Name),
             Type: get(columnIndex.Type),
             Waves: Number(
@@ -1307,7 +1351,65 @@ async function loadData() {
 
         populateDroids();
         associateMissions();
+
+        state.completedMissionIds =
+            loadCompletedMissionIds();
+
+        state.completedMissionIds =
+            new Set(
+                Array.from(
+                    state.completedMissionIds
+                ).filter(
+                    id =>
+                        id >= 0 &&
+                        id < state.missions.length
+                )
+            );
+
+        saveCompletedMissionIds();
+
+        updateMissionCompletedFilterButton();
+        updateCompletedMissionsResetButton();
+
         updateMissionSearchResults();
+
+        state.seenObjectIds =
+            loadSeenObjectIds();
+
+        const validSeenIds =
+            new Set();
+
+        for (const system of state.systems) {
+            for (const object of system.objects) {
+                if (
+                    state.seenObjectIds.has(
+                        object.seenId
+                    )
+                ) {
+                    validSeenIds.add(
+                        object.seenId
+                    );
+                }
+            }
+        }
+
+        for (const droid of state.droids) {
+            if (
+                state.seenObjectIds.has(
+                    droid.seenId
+                )
+            ) {
+                validSeenIds.add(
+                    droid.seenId
+                );
+            }
+        }
+
+        state.seenObjectIds =
+            validSeenIds;
+
+        saveSeenObjectIds();
+        updateSeenObjectsResetButton();
 
         statusElement.textContent =
             "Loading equipment data...";
@@ -2061,6 +2163,7 @@ function associateMissions() {
 function createObject(row, system, parent, role) {
     return {
         row,
+        seenId: `object:${row.Index}`,
         name: row.Planet,
         type: row.Type,
 
@@ -3040,7 +3143,7 @@ function populateDroids() {
 
                     const droid = {
                         role: "droid",
-
+                        seenId: `droid:${name}`,
                         name: name,
 
                         row: {
@@ -3311,18 +3414,38 @@ function isSearchActive() {
 
     return (
         state.searchTypes.size > 0 ||
-
         ENVIRONMENTS.some(
             environment =>
                 state.environmentFilters[
                     environment
                 ] !== 0
         ) ||
-
         state.searchQuery.trim() !== "" ||
-
-        areMissionFiltersActive()
+        areMissionFiltersActive() ||
+        state.seenFilter !== SEEN_FILTER_ALL
     );
+}
+
+
+function objectMatchesSeenFilter(object) {
+    const seen =
+        isObjectSeen(object);
+
+    if (
+        state.seenFilter ===
+        SEEN_FILTER_UNSEEN
+    ) {
+        return !seen;
+    }
+
+    if (
+        state.seenFilter ===
+        SEEN_FILTER_SEEN
+    ) {
+        return seen;
+    }
+
+    return true;
 }
 
 
@@ -3378,6 +3501,427 @@ function cycleEnvironmentSearch(environment) {
                         ? `${environment} −`
                         : environment;
         }
+}
+
+
+function updateSeenFilterButton() {
+    switch (state.seenFilter) {
+        case SEEN_FILTER_UNSEEN:
+            seenFilterButton.textContent =
+                "Other";
+            seenFilterButton.dataset.state =
+                "subtractive";
+            break;
+
+        case SEEN_FILTER_SEEN:
+            seenFilterButton.textContent =
+                "Seen";
+            seenFilterButton.dataset.state =
+                "additive";
+            break;
+
+        default:
+            seenFilterButton.textContent =
+                "Seen + Other";
+            seenFilterButton.dataset.state =
+                "default";
+            break;
+    }
+}
+
+
+function cycleSeenFilter() {
+    state.seenFilter =
+        (state.seenFilter + 1) % 3;
+
+    updateSeenFilterButton();
+    updateMissionSearchResults();
+    updateSearchMatches();
+    updateStatus();
+
+    if (state.searchListMode) {
+        searchResultsList.scrollTop = 0;
+        updateSearchResultsList();
+    }
+
+    render();
+}
+
+
+function updateMissionCompletedFilterButton() {
+    switch (
+        state.missionFilters.completion
+    ) {
+        case COMPLETED_FILTER_OTHER:
+            missionCompletedFilterButton.textContent =
+                "Other";
+
+            missionCompletedFilterButton.dataset.state =
+                "subtractive";
+            break;
+
+        case COMPLETED_FILTER_COMPLETED:
+            missionCompletedFilterButton.textContent =
+                "Completed";
+
+            missionCompletedFilterButton.dataset.state =
+                "additive";
+            break;
+
+        default:
+            missionCompletedFilterButton.textContent =
+                "Completed + Other";
+
+            missionCompletedFilterButton.dataset.state =
+                "default";
+            break;
+    }
+}
+
+function cycleMissionCompletedFilter() {
+    state.missionFilters.completion =
+        (
+            state.missionFilters.completion + 1
+        ) % 3;
+
+    updateMissionCompletedFilterButton();
+
+    updateMissionSearchResults();
+    updateSearchMatches();
+    updateStatus();
+
+    if (
+        state.searchListMode &&
+        state.searchListContent ===
+            "missions"
+    ) {
+        searchResultsList.scrollTop = 0;
+        updateSearchResultsList();
+    }
+
+    render();
+}
+
+
+const COMPLETED_RESET_HOLD_TIME = 1500;
+
+let completedResetTimer = null;
+
+function updateCompletedMissionsResetButton() {
+    resetCompletedMissionsButton.disabled =
+        !hasCompletedMissions();
+
+    if (
+        resetCompletedMissionsButton.textContent !==
+        "Completed missions were reset"
+    ) {
+        resetCompletedMissionsButton.textContent =
+            "Hold to reset Completed missions";
+    }
+}
+
+
+function resetCompletedMissions() {
+    state.completedMissionIds.clear();
+    saveCompletedMissionIds();
+
+    updateCompletedMissionsResetButton();
+    updateMissionSearchResults();
+    updateSearchMatches();
+    updateStatus();
+
+    if (
+        state.searchListMode &&
+        state.searchListContent ===
+            "missions"
+    ) {
+        searchResultsList.scrollTop = 0;
+        updateSearchResultsList();
+    }
+
+    resetCompletedMissionsButton.classList.remove(
+        "holding"
+    );
+
+    render();
+
+    resetCompletedMissionsButton.disabled = true;
+    resetCompletedMissionsButton.textContent =
+        "Completed missions were reset";
+
+    setTimeout(() => {
+        resetCompletedMissionsButton.textContent =
+            "Hold to reset Completed missions";
+    }, 3000);
+}
+
+
+function startCompletedMissionsReset() {
+    if (
+        resetCompletedMissionsButton.disabled
+    ) {
+        return;
+    }
+
+    if (completedResetTimer !== null) {
+        return;
+    }
+
+    resetCompletedMissionsButton.classList.add(
+        "holding"
+    );
+
+    completedResetTimer =
+        setTimeout(
+            () => {
+                completedResetTimer = null;
+                resetCompletedMissions();
+            },
+            COMPLETED_RESET_HOLD_TIME
+        );
+}
+
+function cancelCompletedMissionsReset() {
+    if (completedResetTimer === null) {
+        return;
+    }
+
+    clearTimeout(
+        completedResetTimer
+    );
+
+    completedResetTimer = null;
+
+    resetCompletedMissionsButton.classList.remove(
+        "holding"
+    );
+}
+
+resetCompletedMissionsButton.addEventListener(
+    "pointerdown",
+    event => {
+        event.preventDefault();
+        startCompletedMissionsReset();
+    }
+);
+
+resetCompletedMissionsButton.addEventListener(
+    "pointerup",
+    cancelCompletedMissionsReset
+);
+
+resetCompletedMissionsButton.addEventListener(
+    "pointercancel",
+    cancelCompletedMissionsReset
+);
+
+resetCompletedMissionsButton.addEventListener(
+    "pointerleave",
+    cancelCompletedMissionsReset
+);
+
+window.addEventListener(
+    "blur",
+    cancelCompletedMissionsReset
+);
+
+
+function setMissionCompleted(mission, completed) {
+    if (completed) {
+        state.completedMissionIds.add(
+            mission.id
+        );
+    } else {
+        state.completedMissionIds.delete(
+            mission.id
+        );
+    }
+
+    saveCompletedMissionIds();
+    updateCompletedMissionsResetButton();
+    updateMissionSearchResults();
+    updateSearchMatches();
+    updateStatus();
+
+    const entry =
+        searchResultsList.querySelector(
+            `[data-mission-id="${mission.id}"]`
+        );
+
+    if (entry) {
+        const completedElement =
+            entry.querySelector(
+                ".mission-result-completed"
+            );
+
+        if (completedElement) {
+            completedElement.textContent =
+                completed ? "✓" : "";
+        }
+    }
+
+    render();
+}
+
+
+const SEEN_RESET_HOLD_TIME = 1500;
+
+let seenResetTimer = null;
+
+
+function updateSeenObjectsResetButton() {
+    resetSeenObjectsButton.disabled =
+        !hasSeenObjects();
+
+    if (
+        resetSeenObjectsButton.textContent !==
+        "Seen objects were reset"
+    ) {
+        resetSeenObjectsButton.textContent =
+            "Hold to reset Seen objects";
+    }
+}
+
+
+function resetSeenObjects() {
+    state.seenObjectIds.clear();
+
+    saveSeenObjectIds();
+    updateSeenObjectsResetButton();
+    updateMissionSearchResults();
+    updateSearchMatches();
+    updateStatus();
+
+    if (
+        state.searchListMode
+    ) {
+        searchResultsList.scrollTop = 0;
+        updateSearchResultsList();
+    }
+
+    resetSeenObjectsButton.classList.remove(
+        "holding"
+    );
+
+    render();
+
+    resetSeenObjectsButton.disabled = true;
+
+    resetSeenObjectsButton.textContent =
+        "Seen objects were reset";
+
+    setTimeout(() => {
+        resetSeenObjectsButton.textContent =
+            "Hold to reset Seen objects";
+    }, 3000);
+}
+
+
+function startSeenObjectsReset() {
+    if (
+        resetSeenObjectsButton.disabled
+    ) {
+        return;
+    }
+
+    if (seenResetTimer !== null) {
+        return;
+    }
+
+    resetSeenObjectsButton.classList.add(
+        "holding"
+    );
+
+    seenResetTimer =
+        setTimeout(
+            () => {
+                seenResetTimer = null;
+                resetSeenObjects();
+            },
+            SEEN_RESET_HOLD_TIME
+        );
+}
+
+
+function cancelSeenObjectsReset() {
+    if (seenResetTimer === null) {
+        return;
+    }
+
+    clearTimeout(
+        seenResetTimer
+    );
+
+    seenResetTimer = null;
+
+    resetSeenObjectsButton.classList.remove(
+        "holding"
+    );
+}
+
+
+resetSeenObjectsButton.addEventListener(
+    "pointerdown",
+    event => {
+        event.preventDefault();
+        startSeenObjectsReset();
+    }
+);
+
+resetSeenObjectsButton.addEventListener(
+    "pointerup",
+    cancelSeenObjectsReset
+);
+
+resetSeenObjectsButton.addEventListener(
+    "pointercancel",
+    cancelSeenObjectsReset
+);
+
+resetSeenObjectsButton.addEventListener(
+    "pointerleave",
+    cancelSeenObjectsReset
+);
+
+
+window.addEventListener(
+    "blur",
+    cancelSeenObjectsReset
+);
+
+
+function setObjectSeen(object, seen) {
+    if (seen) {
+        state.seenObjectIds.add(
+            object.seenId
+        );
+    } else {
+        state.seenObjectIds.delete(
+            object.seenId
+        );
+    }
+
+    saveSeenObjectIds();
+    updateSeenObjectsResetButton();
+
+    const entry =
+        searchResultsList.querySelector(
+            `[data-seen-id="${CSS.escape(object.seenId)}"]`
+        );
+
+    if (entry) {
+        const seenElement =
+            entry.querySelector(
+                ".search-result-seen"
+            );
+
+        if (seenElement) {
+            seenElement.textContent =
+                seen ? "✓" : "";
+        }
+    }
+
+    render();
 }
 
 
@@ -3478,6 +4022,10 @@ function updateSearchMatches() {
                 return false;
             }
         }
+        
+        if (!objectMatchesSeenFilter(object)) {
+            return false;
+        }
 
         if (pattern) {
             const name =
@@ -3511,6 +4059,155 @@ function updateSearchMatches() {
             }
         }
     }
+}
+
+
+function loadSeenObjectIds() {
+    try {
+        const stored =
+            localStorage.getItem(
+                SEEN_OBJECTS_STORAGE_KEY
+            );
+
+        if (!stored) {
+            return new Set();
+        }
+
+        const parsed =
+            JSON.parse(stored);
+
+        if (!Array.isArray(parsed)) {
+            return new Set();
+        }
+
+        return new Set(
+            parsed.filter(
+                id =>
+                    typeof id === "string" &&
+                    id.length > 0
+            )
+        );
+    }
+    catch (error) {
+        console.warn(
+            "Could not load seen objects:",
+            error
+        );
+
+        return new Set();
+    }
+}
+
+
+function saveSeenObjectIds() {
+    try {
+        localStorage.setItem(
+            SEEN_OBJECTS_STORAGE_KEY,
+            JSON.stringify(
+                Array.from(
+                    state.seenObjectIds
+                )
+            )
+        );
+    }
+    catch (error) {
+        console.warn(
+            "Could not save seen objects:",
+            error
+        );
+    }
+}
+
+
+function isObjectSeen(object) {
+    return (
+        typeof object.seenId === "string" &&
+        state.seenObjectIds.has(
+            object.seenId
+        )
+    );
+}
+
+
+function hasSeenObjects() {
+    return (
+        state.seenObjectIds.size > 0
+    );
+}
+
+
+function loadCompletedMissionIds() {
+    try {
+        const stored =
+            localStorage.getItem(
+                COMPLETED_MISSIONS_STORAGE_KEY
+            );
+
+        if (!stored) {
+            return new Set();
+        }
+
+        const parsed =
+            JSON.parse(stored);
+
+        if (!Array.isArray(parsed)) {
+            return new Set();
+        }
+
+        return new Set(
+            parsed.filter(
+                id =>
+                    Number.isInteger(id) &&
+                    id >= 0
+            )
+        );
+    }
+    catch (error) {
+        console.warn(
+            "Could not load completed missions:",
+            error
+        );
+
+        return new Set();
+    }
+}
+
+
+function saveCompletedMissionIds() {
+    try {
+        localStorage.setItem(
+            COMPLETED_MISSIONS_STORAGE_KEY,
+            JSON.stringify(
+                Array.from(
+                    state.completedMissionIds
+                )
+            )
+        );
+    }
+    catch (error) {
+        console.warn(
+            "Could not save completed missions:",
+            error
+        );
+    }
+}
+
+
+function isMissionCompleted(mission) {
+    return (
+        Number.isInteger(mission.id) &&
+        state.completedMissionIds.has(
+            mission.id
+        )
+    );
+}
+
+
+function hasCompletedMissions() {
+    return state.missions.some(
+        mission =>
+            isMissionCompleted(mission)
+    );
 }
 
 
@@ -3551,6 +4248,25 @@ function missionMatchesMissionFilters(mission) {
         !filters.types.has(
             mission.Type
         )
+    ) {
+        return false;
+    }
+
+    const completed =
+        isMissionCompleted(mission);
+
+    if (
+        filters.completion ===
+        COMPLETED_FILTER_OTHER &&
+        completed
+    ) {
+        return false;
+    }
+
+    if (
+        filters.completion ===
+        COMPLETED_FILTER_COMPLETED &&
+        !completed
     ) {
         return false;
     }
@@ -5628,6 +6344,10 @@ function objectPassesPlanetFilters(object) {
         return false;
     }
 
+    if (!objectMatchesSeenFilter(object)) {
+        return false;
+    }
+
     const query =
         state.searchQuery
             .trim()
@@ -5731,6 +6451,9 @@ function updateSearchResultsList() {
 
         entry.className =
             "search-result-entry";
+            
+        entry.dataset.seenId =
+            object.seenId;
 
         const constellationColor =
             object.system.constellation.color;
@@ -5783,6 +6506,16 @@ function updateSearchResultsList() {
         environment.textContent =
             getEnvironmentEmojis(object);
 
+        const seen = document.createElement("span");
+
+        seen.className =
+            "search-result-seen";
+
+        seen.textContent =
+            isObjectSeen(object)
+                ? "✓"
+                : "";
+
         const worldPosition =
             getObjectWorldPosition(object);
 
@@ -5820,6 +6553,7 @@ function updateSearchResultsList() {
         entry.appendChild(icon);
         entry.appendChild(name);
         entry.appendChild(environment);
+        entry.appendChild(seen);
         entry.appendChild(coordinates);
 
         entry.addEventListener(
@@ -5849,6 +6583,7 @@ function areMissionFiltersActive() {
     return (
         filters.name.trim() !== "" ||
         filters.types.size > 0 ||
+        filters.completion !== COMPLETED_FILTER_ALL ||
         filters.minWaves !== 3 ||
         filters.maxWaves !== 50 ||
         filters.minDifficultyLow !== 0 ||
@@ -6066,6 +6801,9 @@ function updateMissionResultsList() {
         entry.className =
             "search-result-entry";
 
+        entry.dataset.missionId =
+            mission.id;
+
         const missionColor =
             getMissionColor(mission);
 
@@ -6120,6 +6858,19 @@ function updateMissionResultsList() {
         environment.textContent =
             mission.environmentEmojis;
 
+        const completed =
+            document.createElement("span");
+
+        completed.className =
+            "mission-result-completed";
+
+        completed.textContent =
+            state.completedMissionIds.has(
+                mission.id
+            )
+                ? "✓"
+                : "";
+
         const missionStats =
             document.createElement("span");
 
@@ -6150,6 +6901,7 @@ function updateMissionResultsList() {
         entry.appendChild(icon);
         entry.appendChild(name);
         entry.appendChild(environment);
+        entry.appendChild(completed);
         entry.appendChild(missionStats);
 
         entry.addEventListener(
@@ -7771,8 +8523,40 @@ function showMissionInfo(mission) {
         `;
     }
 
+    const completed =
+        state.completedMissionIds.has(
+            mission.id
+        );
+
+    html += `
+        <button
+            id="missionCompletedButton"
+            class="environment-search-button"
+            data-state="${completed ? "additive" : "subtractive"}"
+        >
+            ${completed ? "✓ Completed" : "Mark as Completed"}
+        </button>
+    `;
+
     infoContent.innerHTML =
         html;
+
+    const missionCompletedButton =
+        document.getElementById("missionCompletedButton");
+    
+    missionCompletedButton.addEventListener(
+        "click",
+        () => {
+            setMissionCompleted(
+                mission,
+                !state.completedMissionIds.has(
+                    mission.id
+                )
+            );
+    
+            showMissionInfo(mission);
+        }
+    );
 
     infoPanel.classList.remove(
         "hidden"
@@ -8039,7 +8823,39 @@ function showObjectInfo(object) {
         `;
     }
 
+    const seen =
+        isObjectSeen(object);
+
+    html += `
+        <button
+            id="objectSeenButton"
+            class="environment-search-button"
+            data-state="${seen ? "additive" : "subtractive"}"
+        >
+            ${seen ? "✓ Seen" : "Mark as Seen"}
+        </button>
+    `;
+
     infoContent.innerHTML = html;
+    
+    const objectSeenButton =
+        document.getElementById("objectSeenButton");
+
+    objectSeenButton.addEventListener(
+        "click",
+        () => {
+            setObjectSeen(
+                object,
+                !isObjectSeen(object)
+            );
+
+            updateMissionSearchResults();
+            updateSearchMatches();
+            updateStatus();
+
+            showObjectInfo(object);
+        }
+    );
 
     infoPanel.classList.remove("hidden");
 
@@ -8920,6 +9736,18 @@ focusedMissionButton.addEventListener(
 
         updateSearchResultsList();
     }
+);
+
+
+missionCompletedFilterButton.addEventListener(
+    "click",
+    cycleMissionCompletedFilter
+);
+
+
+seenFilterButton.addEventListener(
+    "click",
+    cycleSeenFilter
 );
 
 

@@ -29,6 +29,9 @@
                 It's also integrated wtih the Legendary tracking chart, containing all Legendary and Rare equipment locations.
             </p>
             <p>
+                Seen objects and completed missions are stored locally per device.
+            </p>
+            <p>
                 Controls:
             </p>
             <p>
@@ -227,6 +230,27 @@
                                     placeholder="Search mission name..."
                                     autocomplete="off"
                                 >
+                            </div>
+
+
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Seen Planets
+                                </div>
+                                <button
+                                    id="resetSeenObjectsButton"
+                                    class="reset-filters-button"
+                                    disabled
+                                >
+                                    Hold to reset seen planets
+                                </button>
+                                <button
+                                    id="seenFilterButton"
+                                    class="environment-search-button"
+                                    data-state="default"
+                                >
+                                    Seen + Unseen
+                                </button>
                             </div>
                 
                 
@@ -431,6 +455,26 @@
                                     >
                                     Droid
                                 </label>
+                            </div>
+
+                            <div class="options-group">
+                                <div class="options-group-title">
+                                    Completed Missions
+                                </div>
+                                <button
+                                    id="resetCompletedMissionsButton"
+                                    class="reset-filters-button"
+                                    disabled
+                                >
+                                    Hold to reset completed missions
+                                </button>
+                                <button
+                                    id="missionCompletedFilterButton"
+                                    class="environment-search-button"
+                                    data-state="default"
+                                >
+                                    Completed + Other
+                                </button>
                             </div>
 
                             <div
