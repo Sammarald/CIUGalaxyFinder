@@ -2546,25 +2546,30 @@ function zoomAt(screenX, screenY, factor) {
 
 function resizeCanvas() {
     const rect =
-        mapContainer.getBoundingClientRect();
+        canvas.getBoundingClientRect();
 
     const dpr =
         window.devicePixelRatio || 1;
 
-    state.canvasWidth = rect.width;
-    state.canvasHeight = rect.height;
+    state.canvasWidth =
+        rect.width;
 
-    canvas.width =
+    state.canvasHeight =
+        rect.height;
+
+    const width =
         Math.round(rect.width * dpr);
 
-    canvas.height =
+    const height =
         Math.round(rect.height * dpr);
 
-    canvas.style.width =
-        `${rect.width}px`;
-
-    canvas.style.height =
-        `${rect.height}px`;
+    if (
+        canvas.width !== width ||
+        canvas.height !== height
+    ) {
+        canvas.width = width;
+        canvas.height = height;
+    }
 
     ctx.setTransform(
         dpr,
@@ -10124,6 +10129,14 @@ loadData();
 
 requestAnimationFrame(
     animationFrame
+);
+
+window.visualViewport?.addEventListener(
+    "resize",
+    () => {
+        resizeCanvas();
+        render();
+    }
 );
 
 const mapResizeObserver =
