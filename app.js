@@ -10139,6 +10139,19 @@ window.visualViewport?.addEventListener(
     }
 );
 
+document.addEventListener(
+    "visibilitychange",
+    () => {
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+            resizeCanvas();
+            render();
+        }
+    }
+);
+
 const mapResizeObserver =
     new ResizeObserver(() => {
         resizeCanvas();
