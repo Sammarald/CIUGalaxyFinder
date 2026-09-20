@@ -7990,8 +7990,8 @@ function drawBackground() {
     ctx.fillRect(
         0,
         0,
-        state.canvasWidth,
-        state.canvasHeight
+        state.canvasWidth * 3,
+        state.canvasHeight * 3
     );
 }
 
