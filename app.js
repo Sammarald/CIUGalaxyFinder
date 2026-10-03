@@ -43,7 +43,7 @@ const ENVIRONMENTS = [
     "Frozen"
 ];
 
-const EQUIPMENT_SPREADSHEET_ID = "1SkezvomQiJ90fGVRzii7LGNtBW5VueIM"
+const EQUIPMENT_SPREADSHEET_ID = "1fncrCPSFbil8uKC5mzNBuZ2Ow6xGzLnaeaLq0Df1vbg"
 
 const COMPLETED_MISSIONS_STORAGE_KEY =
     "ciuCompletedMissionIds";
@@ -61,8 +61,8 @@ const SEEN_FILTER_SEEN = 2;
 
 const EQUIPMENT_LAYOUTS = {
     other: {
-        legendaryColumn: "L",
-        rareColumns: ["M", "N", "O"]
+        legendaryColumn: "T",
+        rareColumns: ["U", "V", "W"]
     },
 
     spacecraft: {
@@ -75,144 +75,144 @@ const EQUIPMENT_TYPES = [
     {
         name: "Electrostatic Thruster",
         fullName: "Electrostatic Ion Thruster",
-        row: 16,
+        row: 19,
         layout: "other"
     },
     {
         name: "Hall-Effect Thruster",
-        row: 13,
+        row: 16,
         layout: "other"
     },
     {
         name: "Magnetospheric Thruster",
         fullName: "Magnetospheric Plasma Thruster",
-        row: 14,
+        row: 17,
         layout: "other"
     },
     {
         name: "Pulsed Thruster",
         fullName: "Pulsed-Inductive Thruster",
-        row: 15,
+        row: 18,
         layout: "other"
     },
     {
         name: "Aluminum Heat Sink",
         fullName: "Aluminum Nitride Heat Sink",
-        row: 11,
+        row: 14,
         layout: "other"
     },
     {
         name: "Beryllium Heat Sink",
         fullName: "Beryllium Oxide Heat Sink",
-        row: 9,
+        row: 12,
         layout: "other"
     },
     {
         name: "Copper Heat Sink",
-        row: 12,
+        row: 15,
         layout: "other"
     },
     {
         name: "Cubic Heat Sink",
         fullName: "Cubic Boron Arsenide Heat Sink",
-        row: 8,
+        row: 11,
         layout: "other"
     },
     {
         name: "Pyrolytic Heat Sink",
         fullName: "Pyrolytic Graphite Heat Sink",
-        row: 10,
+        row: 13,
         layout: "other"
     },
     {
         name: "Mr. Fusion Reactor",
         fullName: "Mr. Fusion Plutonium Reactor",
-        row: 19,
+        row: 22,
         layout: "other"
     },
     {
         name: "Proton Reactor",
         fullName: "Proton-Proton Chain Reactor",
-        row: 17,
+        row: 20,
         layout: "other"
     },
     {
         name: "Uranium Reactor",
         fullName: "Uranium Fission Reactor",
-        row: 18,
+        row: 21,
         layout: "other"
     },
 
     {
         name: "BX-7",
         fullName: "BX-7 Excalibur",
-        row: 14,
+        row: 17,
         layout: "spacecraft"
     },
     {
         name: "BX-8",
         fullName: "BX-8 Ukonvasara",
-        row: 15,
+        row: 18,
         layout: "spacecraft"
     },
     {
         name: "BX-9",
         fullName: "BX-9 Mjölnir",
-        row: 16,
+        row: 19,
         layout: "spacecraft"
     },
     {
         name: "H&C 101",
         fullName: "H&C 101 Hatchling",
-        row: 8,
+        row: 11,
         layout: "spacecraft"
     },
     {
         name: "H&C 201",
         fullName: "H&C 201 Pullet",
-        row: 9,
+        row: 12,
         layout: "spacecraft"
     },
     {
         name: "H&C 301",
         fullName: "H&C 301 Cockerel",
-        row: 10,
+        row: 13,
         layout: "spacecraft"
     },
     {
         name: "M400",
         fullName: "M400 Caterer",
-        row: 11,
+        row: 14,
         layout: "spacecraft"
     },
     {
         name: "M404-PI",
         fullName: "M404-PI Deliverer",
-        row: 12,
+        row: 15,
         layout: "spacecraft"
     },
     {
         name: "M408",
         fullName: "M408 Cuisinier",
-        row: 13,
+        row: 16,
         layout: "spacecraft"
     },
     {
         name: "VF-56",
         fullName: "VF-56 Starling",
-        row: 17,
+        row: 20,
         layout: "spacecraft"
     },
     {
         name: "VF-66",
         fullName: "VF-66 Jackdaw",
-        row: 18,
+        row: 21,
         layout: "spacecraft"
     },
     {
         name: "VF-76",
         fullName: "VF-76 Raven",
-        row: 19,
+        row: 22,
         layout: "spacecraft"
     }
 ];
@@ -1564,7 +1564,7 @@ async function loadTrackingChart() {
     state.equipmentChartOutdated = false;
 
     const statusData =
-        await fetchSheetRange("I5");
+        await fetchSheetRange("R7");
 
     const status =
         getSheetValue(statusData);
@@ -1587,9 +1587,21 @@ async function loadTrackingChart() {
     }
 
     const equipmentData =
-        await fetchSheetRange(
-            "E8:O19"
-        );
+    await fetchSheetRange("E11:H22");
+
+    const equipmentData2 =
+        await fetchSheetRange("T11:W22");
+
+    const columnIndex = {
+        E: 0,
+        F: 1,
+        G: 2,
+        H: 3,
+        T: 0,
+        U: 1,
+        V: 2,
+        W: 3
+    };
 
     for (
         const equipment
@@ -1600,26 +1612,22 @@ async function loadTrackingChart() {
                 equipment.layout
             ];
 
-        const columnIndex = {
-            E: 0,
-            F: 1,
-            G: 2,
-            H: 3,
-            I: 4,
-            J: 5,
-            K: 6,
-            L: 7,
-            M: 8,
-            N: 9,
-            O: 10
-        };
-
-        // equipment.row is the actual spreadsheet row number
         const rowIndex =
-            equipment.row - 8;
+            equipment.row - 11;
+
+        const data =
+            layout.legendaryColumn in
+            {
+                E: true,
+                F: true,
+                G: true,
+                H: true
+            }
+                ? equipmentData
+                : equipmentData2;
 
         const row =
-            equipmentData.table.rows[
+            data.table.rows[
                 rowIndex
             ];
 
@@ -1642,17 +1650,13 @@ async function loadTrackingChart() {
             state.equipment.push({
                 name:
                     equipment.name,
-
                 fullName:
                     equipment.fullName ||
                     equipment.name,
-
                 rarity:
                     "legendary",
-
                 coordinates:
                     legendary,
-
                 category:
                     getEquipmentCategory(
                         equipment.name
@@ -1680,16 +1684,12 @@ async function loadTrackingChart() {
             state.equipment.push({
                 name:
                     equipment.name,
-
                 fullName:
                     equipment.fullName ||
                     equipment.name,
-
                 rarity:
                     "rare",
-
                 coordinates,
-
                 category:
                     getEquipmentCategory(
                         equipment.name
