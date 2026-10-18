@@ -452,7 +452,7 @@
 451	170	157	Delta Codrus	Codrus	Terran planet	FALSE	FALSE	FALSE	FALSE	FALSE			Cleitus
 452	170	157	Epsilon Codrus	Codrus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Cleitus
 453	167	166	Aloeus	Aloeus	Sun	TRUE	TRUE	FALSE	FALSE	FALSE		Codrus	Cleitus
-454	167	166	Alpha Aloeus	Aloeus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Cleitus
+454	167	166	Alpha Aloeus	Aloeus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE			Cleitus
 455	167	166	Psi Aloeus	Aloeus	Barren rock	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Cleitus
 456	167	166	Chi Aloeus	Aloeus	Alien world	FALSE	FALSE	FALSE	FALSE	FALSE	moon		Cleitus
 457	167	166	Delta Aloeus	Aloeus	Gas giant	FALSE	FALSE	FALSE	FALSE	FALSE			Cleitus
