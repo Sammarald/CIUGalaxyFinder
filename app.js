@@ -1587,20 +1587,22 @@ async function loadTrackingChart() {
     }
 
     const equipmentData =
-    await fetchSheetRange("E11:H22");
+    await fetchSheetRange("D11:H22");
 
     const equipmentData2 =
-        await fetchSheetRange("T11:W22");
+        await fetchSheetRange("S11:W22");
 
     const columnIndex = {
-        E: 0,
-        F: 1,
-        G: 2,
-        H: 3,
-        T: 0,
-        U: 1,
-        V: 2,
-        W: 3
+        D: 0,
+        E: 1,
+        F: 2,
+        G: 3,
+        H: 4,
+        S: 0,
+        T: 1,
+        U: 2,
+        V: 3,
+        W: 4
     };
 
     for (
@@ -1738,7 +1740,14 @@ function associateEquipmentData() {
 
 
 function resolveEquipmentLocations() {
-    for (const equipment of state.equipment) {
+    for (
+        let i = state.equipment.length - 1;
+        i >= 0;
+        i--
+    ) {
+        const equipment =
+            state.equipment[i];
+
         const parts =
             equipment.coordinates
                 .split("+")
@@ -1750,11 +1759,12 @@ function resolveEquipmentLocations() {
             !Number.isFinite(parts[1])
         ) {
             console.warn(
-                `Skipping equipment "${equipment.name}" ` +
+                `Removing equipment "${equipment.name}" ` +
                 `with invalid coordinates: ` +
                 `"${equipment.coordinates}"`
             );
 
+            state.equipment.splice(i, 1);
             continue;
         }
 
@@ -1770,11 +1780,12 @@ function resolveEquipmentLocations() {
 
         if (!system) {
             console.warn(
-                `Skipping equipment "${equipment.name}" ` +
+                `Removing equipment "${equipment.name}" ` +
                 `at unknown system coordinates ` +
                 `"${equipment.coordinates}"`
             );
 
+            state.equipment.splice(i, 1);
             continue;
         }
 
@@ -1804,18 +1815,16 @@ function resolveEquipmentLocations() {
 
         if (!heroware) {
             console.warn(
-                `Skipping equipment "${equipment.name}" ` +
-                `at ${system.name}, no Heroware...?`
+                `Removing equipment "${equipment.name}" ` +
+                `at ${system.name}, no Heroware found.`
             );
 
+            state.equipment.splice(i, 1);
             continue;
         }
 
-        equipment.system =
-            system;
-
-        equipment.heroware =
-            heroware;
+        equipment.system = system;
+        equipment.heroware = heroware;
     }
 }
 
@@ -10124,6 +10133,16 @@ resizeCanvas();
 
 showWormholesCheckbox.checked =
     CONFIG.SHOW_WORMHOLES_BY_DEFAULT;
+
+document.querySelectorAll(
+        ".searchType, " +
+        ".missionType, " +
+        ".equipment-rarity-filter, " +
+        ".equipment-type-filter"
+    )
+    .forEach(checkbox => {
+        checkbox.checked = false;
+    });
 
 loadData();
 
